@@ -1,0 +1,63 @@
+<!-- Tarjeta principal -->
+<div class="card generic-horizontal-card mb-3">
+    <div class="card-body d-flex justify-content-between align-items-center">
+      
+      <!-- Sección Izquierda: Información del vuelo -->
+      <div>
+        <!-- Badges (opcional) -->
+        <div class="mb-2">
+          <!-- Badge Recomendado -->
+          <span 
+            *ngIf="recommendedField && data[recommendedField]" 
+            class="badge bg-warning text-dark me-2"
+          >
+            Recomendado
+          </span>
+          <!-- Badge Más Económico -->
+          <span 
+            *ngIf="mostEconomicalField && data[mostEconomicalField]" 
+            class="badge bg-success"
+          >
+            Más económico
+          </span>
+        </div>
+  
+        <!-- Horarios y aeropuertos -->
+        <div class="d-flex align-items-center">
+          <h5 class="mb-0 me-3">
+            {{ data[departureTimeField] }} {{ data[departureAirportField] }}
+          </h5>
+          <span class="text-muted me-3">
+            Duración {{ data[durationField] }}
+          </span>
+          <h5 class="mb-0">
+            {{ data[arrivalTimeField] }} {{ data[arrivalAirportField] }}
+          </h5>
+        </div>
+  
+        <!-- Paradas -->
+        <div class="mt-1">
+          <a href="#" class="text-decoration-none">
+            {{ data[stopsField] }}
+          </a>
+        </div>
+  
+        <!-- Operado por -->
+        <div class="mt-2 text-muted">
+          Operado por: {{ data[operatedByField] }}
+        </div>
+      </div>
+  
+      <!-- Sección Derecha: Precio -->
+      <div class="text-end">
+        <p class="mb-0">Por persona desde</p>
+        <h5 class="mb-0">
+          {{ data[currencyField] }} {{ data[priceField]  }}
+        </h5>
+        <small class="text-muted">
+          Incluye tasas e impuestos
+        </small>
+      </div>
+    </div>
+  </div>
+  

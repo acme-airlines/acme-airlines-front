@@ -1,0 +1,137 @@
+<div class="container my-4">
+  <!-- Tarjeta de Búsqueda -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Buscar Vuelos</h5>
+    </div>
+    <div class="card-body">
+      <!-- Filtros de Tipo de Viaje -->
+      <div class="mb-3">
+        <div class="btn-group" role="group" aria-label="Tipo de Viaje">
+          <button 
+            type="button" 
+            class="btn btn-outline-primary" 
+            [class.active]="tripType === 'idaYvuelta'" 
+            (click)="onTripTypeChange('idaYvuelta')">
+            Ida y Vuelta
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-primary" 
+            [class.active]="tripType === 'soloIda'" 
+            (click)="onTripTypeChange('soloIda')">
+            Solo Ida
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-primary" 
+            [class.active]="tripType === 'multiDestino'" 
+            (click)="onTripTypeChange('multiDestino')">
+            Multi Destino
+          </button>
+        </div>
+      </div>
+  
+      <!-- Fila 1: Origen, Destino y Pasajeros -->
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label for="origin" class="form-label">Origen</label>
+          <input 
+            type="text" 
+            id="origin" 
+            class="form-control" 
+            placeholder="Ingresa tu origen"
+            [(ngModel)]="origin">
+        </div>
+        <div class="col-md-4">
+          <label for="destination" class="form-label">Destino</label>
+          <input 
+            type="text" 
+            id="destination" 
+            class="form-control" 
+            placeholder="Ingresa tu destino"
+            [(ngModel)]="destination">
+        </div>
+        <div class="col-md-4">
+          <label for="passengers" class="form-label">Pasajeros</label>
+          <input 
+            type="number" 
+            id="passengers" 
+            class="form-control" 
+            placeholder="Cantidad de pasajeros"
+            [(ngModel)]="passengers"
+            min="1">
+        </div>
+      </div>
+  
+      <!-- Fila 2: Fechas y Botón Buscar -->
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="departureDate" class="form-label">Ida</label>
+          <input 
+            type="date" 
+            id="departureDate" 
+            class="form-control"
+            [(ngModel)]="departureDate">
+        </div>
+        <div class="col-md-4 mb-3" *ngIf="tripType === 'idaYvuelta' || tripType === 'multiDestino'">
+          <label for="returnDate" class="form-label">Vuelta</label>
+          <input 
+            type="date" 
+            id="returnDate" 
+            class="form-control"
+            [(ngModel)]="returnDate">
+        </div>
+        <div class="col-md-4 d-flex align-items-end mb-3">
+          <button 
+            type="button" 
+            class="btn btn-primary w-100"
+            (click)="search()">
+            Buscar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Listado de Vuelos -->
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Se recorre el arreglo "flights" para mostrar cada vuelo -->
+    <div class="col" *ngFor="let flight of flights">
+      <!-- Si aún no se presionó "Buscar" se muestra la carta de publicidad -->
+      <ng-container *ngIf="!searchClicked; else flightInfo">
+        <acme-airlines-advertising-letter
+          [data]="flight"
+          imageField="imageUrl"
+          titleField="city"
+          subtitleField="date"
+          [textFields]="[
+            { label: 'Conexión', field: 'connection' },
+            { label: 'Clase', field: 'seatClass' },
+            { label: 'Millas', field: 'miles' },
+            { label: 'Precio', field: 'price' }
+          ]"
+          containerClass=""
+          cardClass="card h-100 shadow-sm">
+        </acme-airlines-advertising-letter>
+      </ng-container>
+      <!-- Una vez presionado "Buscar" se muestra la carta de información detallada -->
+      <ng-template #flightInfo>
+        <acme-airlines-flight-information-letter
+          [data]="flight"
+          recommendedField="recommended"
+          mostEconomicalField="mostEconomical"
+          departureTimeField="departureTime"
+          departureAirportField="departureAirport"
+          durationField="duration"
+          arrivalTimeField="arrivalTime"
+          arrivalAirportField="arrivalAirport"
+          stopsField="stops"
+          operatedByField="operatedBy"
+          priceField="price"
+          currencyField="currency">
+        </acme-airlines-flight-information-letter>
+      </ng-template>
+    </div>
+  </div>
+</div>

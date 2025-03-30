@@ -1,0 +1,32 @@
+<div [class]="containerClass" *ngIf="data">
+  <div [class]="cardClass">
+    <!-- Imagen opcional: se muestra si se indica imageField y el objeto tiene esa propiedad -->
+    <img 
+      *ngIf="imageField && data[imageField]" 
+      [src]="data[imageField]" 
+      class="card-img-top" 
+      alt="Imagen de la tarjeta"
+    />
+
+    <div class="card-body">
+      <!-- Título principal -->
+      <h5 class="card-title" *ngIf="titleField && data[titleField]">
+        {{ data[titleField] }}
+      </h5>
+
+      <!-- Subtítulo -->
+      <p class="card-subtitle mb-2 text-muted" *ngIf="subtitleField && data[subtitleField]">
+        {{ data[subtitleField] }}
+      </p>
+
+      <!-- Campos de texto adicionales -->
+      <div *ngIf="textFields">
+        <div *ngFor="let fieldConfig of textFields">
+          <p class="mb-2">
+            <strong>{{ fieldConfig.label }}:</strong> {{ data[fieldConfig.field] }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
