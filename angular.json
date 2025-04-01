@@ -62,10 +62,14 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "acme-airlines-front:build:production"
+              "buildTarget": "acme-airlines-front:build:production",
+              "port": 4200,
+              "proxyConfig": "proxy.prod.conf.js"
             },
             "development": {
-              "buildTarget": "acme-airlines-front:build:development"
+              "buildTarget": "acme-airlines-front:build:development",
+              "port": 4200,
+              "proxyConfig": "proxy.dev.conf.js" 
             }
           },
           "defaultConfiguration": "development"
