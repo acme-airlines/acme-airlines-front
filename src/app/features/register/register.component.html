@@ -1,126 +1,236 @@
 <div class="container my-4">
-    <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">Registro de Pasajero</h5>
-      </div>
-      <div class="card-body">
-        <form (ngSubmit)="register()" #registrationForm="ngForm">
-          <!-- Nombre -->
-          <div class="mb-3">
-            <label for="name_passenger" class="form-label">Nombre</label>
-            <input 
-              type="text" 
-              id="name_passenger" 
-              class="form-control" 
-              placeholder="Ingrese su nombre" 
-              required
-              [(ngModel)]="passenger.name_passenger" 
-              name="name_passenger">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Registro de Pasajero</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="registerForm" (ngSubmit)="register()">
+        <!-- Nombre -->
+        <div class="mb-3">
+          <label for="name_passenger" class="form-label">Nombre</label>
+          <input
+            type="text"
+            id="name_passenger"
+            class="form-control"
+            placeholder="Ingrese su nombre"
+            formControlName="name"
+          />
+          <div
+            *ngIf="
+              registerForm.get('name')?.invalid &&
+              registerForm.get('name')?.touched
+            "
+            class="text-danger"
+          >
+            El nombre es requerido.
           </div>
-          <!-- Apellido -->
-          <div class="mb-3">
-            <label for="lastname_passenger" class="form-label">Apellido</label>
-            <input 
-              type="text" 
-              id="lastname_passenger" 
-              class="form-control" 
-              placeholder="Ingrese su apellido" 
-              required
-              [(ngModel)]="passenger.lastname_passenger" 
-              name="lastname_passenger">
+        </div>
+        <!-- Apellido -->
+        <div class="mb-3">
+          <label for="lastname_passenger" class="form-label">Apellido</label>
+          <input
+            type="text"
+            id="lastname_passenger"
+            class="form-control"
+            placeholder="Ingrese su apellido"
+            formControlName="lastName"
+          />
+          <div
+            *ngIf="
+              registerForm.get('lastName')?.invalid &&
+              registerForm.get('lastName')?.touched
+            "
+            class="text-danger"
+          >
+            El apellido es requerido.
           </div>
-          <!-- Teléfono -->
-          <div class="mb-3">
-            <label for="phone_passenger" class="form-label">Teléfono</label>
-            <input 
-              type="text" 
-              id="phone_passenger" 
-              class="form-control" 
-              placeholder="Ingrese su teléfono" 
-              required
-              [(ngModel)]="passenger.phone_passenger" 
-              name="phone_passenger">
+        </div>
+        <!-- Teléfono -->
+        <div class="mb-3">
+          <label for="phone_passenger" class="form-label">Teléfono</label>
+          <input
+            type="text"
+            id="phone_passenger"
+            class="form-control"
+            placeholder="Ingrese su teléfono"
+            formControlName="phone"
+          />
+          <div
+            *ngIf="
+              registerForm.get('phone')?.invalid &&
+              registerForm.get('phone')?.touched
+            "
+            class="text-danger"
+          >
+            El teléfono es requerido.
           </div>
-          <!-- Tipo de Documento -->
-          <div class="mb-3">
-            <label for="document_type_passenger" class="form-label">Tipo de Documento</label>
-            <select 
-              id="document_type_passenger" 
-              class="form-select" 
-              required
-              [(ngModel)]="passenger.document_type_passenger" 
-              name="document_type_passenger">
-              <option value="">Seleccione</option>
-              <option value="CC">Cédula de Ciudadanía</option>
-              <option value="TI">Tarjeta de Identidad</option>
-              <option value="PP">Pasaporte</option>
-            </select>
+        </div>
+        <!-- Tipo de Documento -->
+        <div class="mb-3">
+          <label for="document_type_passenger" class="form-label"
+            >Tipo de Documento</label
+          >
+          <select
+            id="document_type_passenger"
+            class="form-select"
+            formControlName="typeDocument"
+          >
+            <option value="">Seleccione</option>
+            <option
+              *ngFor="let docType of documentTypes"
+              [value]="docType.codeTypeDocument"
+            >
+              {{ docType.nameDocumentType }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              registerForm.get('typeDocument')?.invalid &&
+              registerForm.get('typeDocument')?.touched
+            "
+            class="text-danger"
+          >
+            Seleccione un tipo de documento.
           </div>
-          <!-- Número de Documento -->
-          <div class="mb-3">
-            <label for="number_document_passenger" class="form-label">Número de Documento</label>
-            <input 
-              type="text" 
-              id="number_document_passenger" 
-              class="form-control" 
-              placeholder="Ingrese su número de documento" 
-              required
-              [(ngModel)]="passenger.number_document_passenger" 
-              name="number_document_passenger">
+        </div>
+        <!-- Número de Documento -->
+        <div class="mb-3">
+          <label for="number_document_passenger" class="form-label"
+            >Número de Documento</label
+          >
+          <input
+            type="text"
+            id="number_document_passenger"
+            class="form-control"
+            placeholder="Ingrese su número de documento"
+            formControlName="numberDocument"
+          />
+          <div
+            *ngIf="
+              registerForm.get('numberDocument')?.invalid &&
+              registerForm.get('numberDocument')?.touched
+            "
+            class="text-danger"
+          >
+            El número de documento es requerido.
           </div>
-          <!-- Email -->
-          <div class="mb-3">
-            <label for="email_passenger" class="form-label">Email</label>
-            <input 
-              type="email" 
-              id="email_passenger" 
-              class="form-control" 
-              placeholder="Ingrese su email" 
-              required
-              [(ngModel)]="passenger.email_passenger" 
-              name="email_passenger">
+        </div>
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email_passenger" class="form-label">Email</label>
+          <input
+            type="email"
+            id="email_passenger"
+            class="form-control"
+            placeholder="Ingrese su email"
+            formControlName="email"
+          />
+          <div
+            *ngIf="
+              registerForm.get('email')?.invalid &&
+              registerForm.get('email')?.touched
+            "
+            class="text-danger"
+          >
+            <div *ngIf="registerForm.get('email')?.errors?.['required']">
+              El email es requerido.
+            </div>
+            <div *ngIf="registerForm.get('email')?.errors?.['email']">
+              El email debe tener un formato válido.
+            </div>
           </div>
-          <!-- Fecha de Nacimiento -->
-          <div class="mb-3">
-            <label for="birth_date" class="form-label">Fecha de Nacimiento</label>
-            <input 
-              type="date" 
-              id="birth_date" 
-              class="form-control" 
-              required
-              [(ngModel)]="passenger.birth_date" 
-              name="birth_date">
+        </div>
+        <!-- Fecha de Nacimiento -->
+        <div class="mb-3">
+          <label for="birth_date" class="form-label">Fecha de Nacimiento</label>
+          <input
+            type="date"
+            id="birth_date"
+            class="form-control"
+            formControlName="dateOfBirth"
+          />
+          <div
+            *ngIf="
+              registerForm.get('dateOfBirth')?.invalid &&
+              registerForm.get('dateOfBirth')?.touched
+            "
+            class="text-danger"
+          >
+            La fecha de nacimiento es requerida.
           </div>
-          <!-- Fecha de Registro -->
-          <div class="mb-3">
-            <label for="creation_date" class="form-label">Fecha de Registro</label>
-            <input 
-              type="date" 
-              id="creation_date" 
-              class="form-control" 
-              required
-              [(ngModel)]="passenger.creation_date" 
-              name="creation_date">
+        </div>
+        <!-- Género -->
+        <div class="mb-3">
+          <label for="gender_passenger" class="form-label">Género</label>
+          <select
+            id="gender_passenger"
+            class="form-select"
+            formControlName="genre"
+          >
+            <option value="">Seleccione</option>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+            <option value="O">Otro</option>
+          </select>
+          <div
+            *ngIf="
+              registerForm.get('genre')?.invalid &&
+              registerForm.get('genre')?.touched
+            "
+            class="text-danger"
+          >
+            Seleccione un género.
           </div>
-          <!-- Género -->
-          <div class="mb-3">
-            <label for="gender_passenger" class="form-label">Género</label>
-            <select 
-              id="gender_passenger" 
-              class="form-select" 
-              required
-              [(ngModel)]="passenger.gender_passenger" 
-              name="gender_passenger">
-              <option value="">Seleccione</option>
-              <option value="M">Masculino</option>
-              <option value="F">Femenino</option>
-              <option value="O">Otro</option>
-            </select>
+        </div>
+        <!-- Contraseña -->
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Ingrese su contraseña"
+            formControlName="password"
+          />
+          <div
+            *ngIf="
+              registerForm.get('password')?.invalid &&
+              registerForm.get('password')?.touched
+            "
+            class="text-danger"
+          >
+            La contraseña es requerida.
           </div>
-          <!-- Botón de Envío -->
-          <button type="submit" class="btn btn-primary">Registrarse</button>
-        </form>
-      </div>
+        </div>
+        <!-- Repetir Contraseña -->
+        <!-- Repetir Contraseña -->
+        <div class="mb-3">
+          <label for="repeatPassword" class="form-label">Repetir Contraseña</label>
+          <input
+            type="password"
+            id="repeatPassword"
+            class="form-control"
+            placeholder="Repita su contraseña"
+            formControlName="repeatPassword"
+          />
+          <div
+            *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('repeatPassword')?.touched"
+            class="text-danger"
+          >
+            Las contraseñas no coinciden.
+          </div>
+        </div>
+
+
+        <!-- Botón de Envío -->
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="registerForm.invalid"
+        >
+          Registrarse
+        </button>
+      </form>
     </div>
   </div>
-  
+</div>

@@ -15,10 +15,10 @@ const ROUTES: Routes = [
         component: RegisterComponent
     },
     {
-        path: 'flights',
+        path: 'flights-search',
         component: FlightsComponent
     },
-    { path: '**', redirectTo: 'flights', pathMatch: 'full' },
+    { path: '**', redirectTo: 'flights-search', pathMatch: 'full' },
 ]
 
 @NgModule({

@@ -1,25 +1,19 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'acme-airlines-flight-information-letter',
   templateUrl: './flight-information-letter.component.html',
   styleUrls: ['./flight-information-letter.component.scss'],
 })
-export class FlightInformationLetterComponent  {
-    // Objeto genérico con los datos a mostrar
+export class FlightInformationLetterComponent   {
+    // Objeto con los datos del vuelo
     @Input() data: any;
 
-    // Mapeo de campos: indica el nombre del atributo donde se encuentra cada dato
-    @Input() recommendedField?: string;      // Ej: 'recommended'
-    @Input() mostEconomicalField?: string;     // Ej: 'mostEconomical'
-    @Input() departureTimeField!: string;      // Ej: 'departureTime'
-    @Input() departureAirportField!: string;   // Ej: 'departureAirport'
-    @Input() durationField!: string;           // Ej: 'duration'
-    @Input() arrivalTimeField!: string;        // Ej: 'arrivalTime'
-    @Input() arrivalAirportField!: string;     // Ej: 'arrivalAirport'
-    @Input() stopsField!: string;              // Ej: 'stops'
-    @Input() operatedByField!: string;         // Ej: 'operatedBy'
-    @Input() priceField!: string;              // Ej: 'price'
-    @Input() currencyField!: string;           // Ej: 'currency'
-
+    // Mapeo de campos para la nueva data
+    @Input() codeFlightField: string = 'codeFlight';
+    @Input() flightDateField: string = 'flightDate';
+    @Input() flightStartTimeField: string = 'flightStartTime';
+    @Input() flightEndTimeField: string = 'flightEndTime';
+    @Input() originField: string = 'origin';
+    @Input() destinationField: string = 'destination';
 }
