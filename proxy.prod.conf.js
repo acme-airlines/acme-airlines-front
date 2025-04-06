@@ -1,6 +1,6 @@
 module.exports = {
   "/auth/**": {
-    "target": "http://104.248.62.255:8081/api/v1/public/auth",
+    "target": "http://137.184.136.186:8081/api/v1/public/auth",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -8,7 +8,7 @@ module.exports = {
     }
   },
   "/document-type/**": {
-    "target": "http://104.248.62.255:8001/api/v1/public/document-type",
+    "target": "http://137.184.136.186:8001/api/v1/public/document-type",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -16,7 +16,7 @@ module.exports = {
     }
   },
   "/passenger/**": {
-    "target": "http://104.248.62.255:8001/api/v1/public/passenger",
+    "target": "http://137.184.136.186:8001/api/v1/public/passenger",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -24,7 +24,7 @@ module.exports = {
     }
   },
   "/cities/**": {
-    "target": "http://104.248.62.255:8002/api/v1/public/cities",
+    "target": "http://137.184.136.186:8002/api/v1/public/cities",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -32,7 +32,7 @@ module.exports = {
     }
   },
   "/flights/**": {
-    "target": "http://104.248.62.255:8002/api/v1/public/flights",
+    "target": "http://137.184.136.186:8002/api/v1/public/flights",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
