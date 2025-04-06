@@ -1,25 +1,23 @@
-# Etapa 1: Build de Angular
+# Etapa 1: Construcción de la aplicación Angular
 FROM node:18-alpine AS build
 
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
+# Copiar los archivos package.json y package-lock.json
 COPY package*.json ./
+
+# Instalar las dependencias
 RUN npm install
 
+# Copiar todo el código fuente al contenedor
 COPY . .
 
-# Generar build de producción
+# Exponer el puerto 4200, que es el puerto donde Angular servirá la aplicación
+EXPOSE 4200
+
+# Construir la aplicación para producción
 RUN npm run build -- --configuration production
 
-# Etapa 2: NGINX para servir el frontend
-FROM nginx:alpine
-
-# Copiar archivos de Angular a nginx
-COPY --from=build /app/dist/acme-airlines-front /usr/share/nginx/html
-
-# (Opcional) Configuración personalizada de nginx
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Comando por defecto para ejecutar la aplicación Angular en modo producción
+CMD ["npm", "run", "start:prod"]
