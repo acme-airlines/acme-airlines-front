@@ -1,23 +1,15 @@
-# Etapa 1: Construcción de la aplicación Angular
-FROM node:18-alpine AS build
+# Base NGINX
+FROM nginx:alpine
 
-# Establecer el directorio de trabajo dentro del contenedor
-WORKDIR /app
+# Borra contenido HTML por defecto
+RUN rm -rf /usr/share/nginx/html/*
 
-# Copiar los archivos package.json y package-lock.json
-COPY package*.json ./
+# ⚠️ Copia desde el subdirectorio correcto "browser"
+COPY dist/acme-airlines-front/browser /usr/share/nginx/html
 
-# Instalar las dependencias
-RUN npm install
+# Copia config NGINX personalizada (si la tenés)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copiar todo el código fuente al contenedor
-COPY . .
-
-# Exponer el puerto 4200, que es el puerto donde Angular servirá la aplicación
 EXPOSE 4200
 
-# Construir la aplicación para producción
-RUN npm run build -- --configuration production
-
-# Comando por defecto para ejecutar la aplicación Angular en modo producción
-CMD ["npm", "run", "start:prod"]
+CMD ["nginx", "-g", "daemon off;"]
