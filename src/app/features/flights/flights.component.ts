@@ -5,6 +5,7 @@ import { CityService } from '@sharedModule/service/city.service';
 import { FlightsService } from '@sharedModule/service/flights.service';
 import { Flight } from '@sharedModule/models/flight';
 import { FlightFilterRequest } from '@sharedModule/models/flight-filter-request';
+import { FlightResponse } from '@sharedModule/models/flight-response';
 
 @Component({
   selector: 'acme-airlines-flights',
@@ -22,7 +23,7 @@ export class FlightsComponent implements OnInit {
   filteredDestinationCities: City[] = [];
 
   // Lista de vuelos para mostrar en la publicidad
-  flightDetail: Flight[] = [];
+  flightDetail: FlightResponse[] = [];
 
 // Vuelos quemados para publicidad (componente advertising-letter)
 flights = [
@@ -159,7 +160,7 @@ flights = [
       };
 
       this.flightsService.getAvailableFlights(requestPayload).subscribe({
-        next: (flightsApi: Flight[]) => {
+        next: (flightsApi: FlightResponse[]) => {
           this.flightDetail = flightsApi;
           this.searchClicked = true;
         }

@@ -24,7 +24,7 @@ module.exports = {
     }
   },
   "/cities/**": {
-    "target": "http://localhost:8002/api/v1/public/cities",
+    "target": "http://localhost:8002/flights/api/v1/public/cities",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -32,7 +32,7 @@ module.exports = {
     }
   },
   "/flights/**": {
-    "target": "http://localhost:8002/api/v1/public/flights",
+    "target": "http://localhost:8002/flights/api/v1/public/flights",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {

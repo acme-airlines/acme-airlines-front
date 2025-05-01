@@ -159,19 +159,14 @@
   </ng-container>
 
   <ng-template #detailedFlights>
-    <!-- Lista de vuelos para información detallada (componente flight-information-letter) -->
-    <div class="row row-cols-1 row-cols-md-3 g-4 mt-4">
-      <div class="col" *ngFor="let flight of flightDetail">
+    <div class="row g-4">
+      <div class="col-12" *ngFor="let flight of flightDetail">
         <acme-airlines-flight-information-letter
-          [data]="flight"
-          codeFlightField="codeFlight"
-          flightDateField="flightDate"
-          flightStartTimeField="flightStartTime"
-          flightEndTimeField="flightEndTime"
-          originField="origin"
-          destinationField="destination">
+          class="h-100 w-100"
+          [data]="flight">
         </acme-airlines-flight-information-letter>
       </div>
     </div>
   </ng-template>
+  
 </div>

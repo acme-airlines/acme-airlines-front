@@ -1,6 +1,6 @@
 <div [class]="containerClass" *ngIf="data">
   <div [class]="cardClass">
-    <!-- Imagen opcional: se muestra si se indica imageField y el objeto tiene esa propiedad -->
+    <!-- Imagen opcional -->
     <img 
       *ngIf="imageField && data[imageField]" 
       [src]="data[imageField]" 
@@ -14,18 +14,28 @@
         {{ data[titleField] }}
       </h5>
 
-      <!-- Subtítulo -->
-      <p class="card-subtitle mb-2 text-muted" *ngIf="subtitleField && data[subtitleField]">
-        {{ data[subtitleField] }}
-      </p>
+      <!-- Subtítulo y campos, visibles solo si showDetails es true -->
+      <div *ngIf="showDetails">
+        <!-- Subtítulo -->
+        <p class="card-subtitle mb-2 text-muted" *ngIf="subtitleField && data[subtitleField]">
+          {{ data[subtitleField] }}
+        </p>
 
-      <!-- Campos de texto adicionales -->
-      <div *ngIf="textFields">
-        <div *ngFor="let fieldConfig of textFields">
-          <p class="mb-2">
-            <strong>{{ fieldConfig.label }}:</strong> {{ data[fieldConfig.field] }}
-          </p>
+        <!-- Campos de texto adicionales -->
+        <div *ngIf="textFields">
+          <div *ngFor="let fieldConfig of textFields">
+            <p class="mb-2">
+              <strong>{{ fieldConfig.label }}:</strong> {{ data[fieldConfig.field] }}
+            </p>
+          </div>
         </div>
+      </div>
+
+      <!-- Botón Más información -->
+      <div class="mt-3">
+        <button class="btn btn-primary" type="button" (click)="showDetails = !showDetails">
+          {{ showDetails ? 'Ocultar información' : 'Más información' }}
+        </button>
       </div>
     </div>
   </div>

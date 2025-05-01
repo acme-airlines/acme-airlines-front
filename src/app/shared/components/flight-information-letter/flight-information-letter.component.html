@@ -1,41 +1,61 @@
-<!-- Tarjeta principal -->
+<!-- flight-information-letter.component.html -->
 <div class="card generic-horizontal-card mb-3">
   <div class="card-body">
+
+    <!-- Destinos repartidos en columnas iguales -->
+    <ng-container *ngIf="data.destination | keyvalue as destEntries">
+      <div class="row mb-2">
+        <div
+          *ngFor="let entry of destEntries"
+          [ngClass]="'col-md-' + (12 / destEntries.length)"
+        >
+          {{ entry.value }}
+        </div>
+      </div>
+    </ng-container>
     
-    <!-- Encabezado: Código del vuelo y fecha -->
-    <div class="mb-2">
-      <h6 class="mb-0">
-        Vuelo: {{ data[codeFlightField] }}
-      </h6>
-      <small class="text-muted">
-        Fecha: {{ data[flightDateField] }}
-      </small>
+    <div class="d-flex align-items-center mb-2">
+      <div class="me-3 text-center">
+        <h5 class="mb-0">{{ data.startTime }}</h5>
+        <small class="text-muted">Salida</small>
+      </div>
+      <span class="text-muted mx-3">–</span>
+      <div class="text-center">
+        <h5 class="mb-0">{{ data.endTime }}</h5>
+        <small class="text-muted">Llegada</small>
+      </div>
     </div>
 
-    <!-- Sección de horarios y aeropuertos -->
-    <div class="d-flex align-items-center">
-      <!-- Hora de salida y aeropuerto de origen -->
-      <div class="me-3">
-        <h5 class="mb-0">
-          {{ data[flightStartTimeField] }}
-        </h5>
-        <small class="text-muted">
-          {{ data[originField] }}
-        </small>
-      </div>
-      
-      <!-- Separador visual -->
-      <span class="text-muted me-3">-</span>
-      
-      <!-- Hora de llegada y aeropuerto de destino -->
-      <div>
-        <h5 class="mb-0">
-          {{ data[flightEndTimeField] }}
-        </h5>
-        <small class="text-muted">
-          {{ data[destinationField] }}
-        </small>
+    <!-- Botón para ver tarifas -->
+    <button class="btn btn-outline-primary mb-3" (click)="toggleFareTypes()">
+      {{ showFareTypes ? 'Ocultar tarifas' : 'Ver tarifas' }}
+    </button>
+    
+    <!-- TARJETAS DE TARIFAS -->
+    <div *ngIf="showFareTypes" class="row">
+      <div *ngFor="let fare of fareTypes" class="col-md-4 mb-3">
+        <div class="card h-100">
+          <!-- “Ribbon” con precio -->
+          <div class="position-relative">
+            <div
+              class="position-absolute top-0 start-50 translate-middle-x badge bg-primary"
+              style="transform: translateY(-50%) rotate(-2deg);"
+            >
+              {{ fare.price | currency:'USD':true }} / mes
+            </div>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title text-center mt-4">{{ fare.label }}</h5>
+            <ul class="list-unstyled flex-grow-1 ps-3">
+              <li *ngFor="let b of fare.benefits" class="mb-1">
+                <i class="bi bi-check2 text-success me-2"></i>{{ b }}
+              </li>
+            </ul>
+            <button class="btn btn-primary w-100 mt-auto">Seleccionar</button>
+          </div>
+        </div>
       </div>
     </div>
+
   </div>
 </div>

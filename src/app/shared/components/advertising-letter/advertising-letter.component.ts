@@ -22,4 +22,7 @@ export class AdvertingLatterComponent  {
  @Input() containerClass: string = 'container my-4';
  @Input() cardClass: string = 'card h-100 shadow-sm';
 
+ showDetails: boolean = false;
+
+
 }
