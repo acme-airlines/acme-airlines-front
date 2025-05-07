@@ -34,7 +34,7 @@ module.exports = {
     }
   },
   "/cities/**": {
-    "target": "https://api-acmeairlines.duckdns.org/flights/api/v1/public/cities",
+    "target": "https://api-acmeairlines.duckdns.org/flights/api/v1/cities",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -46,7 +46,7 @@ module.exports = {
     }
   },
   "/flights/**": {
-    "target": "https://api-acmeairlines.duckdns.org/flights/api/v1/public/flights",
+    "target": "https://api-acmeairlines.duckdns.org/flights/api/v1/flights",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
