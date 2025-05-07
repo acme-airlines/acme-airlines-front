@@ -1,3 +1,5 @@
+import { FeesService } from "./feesService";
+
 export class FlightResponse {
   /** Mapa de destinos, clave-valor */
   destination?: Record<string, string>;
@@ -10,4 +12,9 @@ export class FlightResponse {
 
   /** Valor del vuelo (precio, tarifa, etc.) */
   valueFlight?: string;
+
+  codigoVuelo?:string
+
+  fees?: FeesService[]
+
 }

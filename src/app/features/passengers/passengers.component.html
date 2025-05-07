@@ -1,0 +1,789 @@
+<!-- passengers.component.html -->
+<div class="container py-4">
+  <!-- pestañas como Pills centradas -->
+  <ul class="nav nav-pills nav-justified mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        [class.active]="activeTab === 'principal'"
+        (click)="setTab('principal')"
+        type="button"
+        role="tab"
+      >
+        Pasajero Principal
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        [class.active]="activeTab === 'adicionales'"
+        (click)="setTab('adicionales')"
+        type="button"
+        role="tab"
+      >
+        Pasajeros Adicionales
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <!-- === Pasajero Principal === -->
+    <div
+      class="tab-pane fade"
+      [class.show]="activeTab === 'principal'"
+      [class.active]="activeTab === 'principal'"
+      role="tabpanel"
+    >
+      <!-- Formulario Agregar -->
+      <div *ngIf="!mainPassenger" class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Agregar Pasajero Principal</h5>
+          <form [formGroup]="principalForm" (ngSubmit)="addPrincipal()">
+            <div class="row gy-3">
+              <div class="col-md-4">
+                <label class="form-label">Nombre</label>
+                <input formControlName="firstName" class="form-control" />
+                <div
+                  *ngIf="
+                    principalForm.get('firstName')!.touched &&
+                    principalForm.get('firstName')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Nombre requerido.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Apellido</label>
+                <input formControlName="lastName" class="form-control" />
+                <div
+                  *ngIf="
+                    principalForm.get('lastName')!.touched &&
+                    principalForm.get('lastName')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Apellido requerido.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Documento</label>
+                <input formControlName="document" class="form-control" />
+                <div
+                  *ngIf="
+                    principalForm.get('document')!.touched &&
+                    principalForm.get('document')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Documento requerido.
+                </div>
+              </div>
+              <!-- Género -->
+              <div class="col-md-4">
+                <label class="form-label">Género</label>
+                <select formControlName="gender" class="form-select">
+                  <option value="" disabled>Seleccione...</option>
+                  <option value="M">Masculino</option>
+                  <option value="F">Femenino</option>
+                  <option value="O">Otro</option>
+                </select>
+                <div
+                  *ngIf="
+                    principalForm.get('gender')!.touched &&
+                    principalForm.get('gender')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Género requerido.
+                </div>
+              </div>
+              <!-- en lugar del campo Edad -->
+              <div class="col-md-4">
+                <label class="form-label">Fecha de nacimiento</label>
+                <input
+                  type="date"
+                  formControlName="birthDate"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="
+                    principalForm.get('birthDate')!.touched &&
+                    principalForm.get('birthDate')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Fecha de nacimiento requerida.
+                </div>
+                <!-- opcional: mostrar edad calculada -->
+                <div *ngIf="principalForm.get('birthDate')!.valid" class="mt-1">
+                  <small>Edad: {{ age }} años</small>
+                </div>
+              </div>
+              <!-- Tipo Documento -->
+              <div class="col-md-4">
+                <label class="form-label">Tipo Documento</label>
+                <select formControlName="documentType" class="form-select">
+                  <option value="" disabled>Seleccione...</option>
+                  <option
+                    *ngFor="let t of documentTypes"
+                    [value]="t.codeTypeDocument"
+                  >
+                    {{ t.nameDocumentType }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    principalForm.get('documentType')?.touched &&
+                    principalForm.get('documentType')?.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Tipo de documento requerido.
+                </div>
+              </div>
+              <!-- … otros campos … -->
+              <div class="col-md-4">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  formControlName="email"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="
+                    principalForm.get('email')!.touched &&
+                    principalForm.get('email')!.invalid
+                  "
+                  class="text-danger small"
+                >
+                  <div *ngIf="principalForm.get('email')!.hasError('required')">
+                    Email requerido.
+                  </div>
+                  <div *ngIf="principalForm.get('email')!.hasError('email')">
+                    Email inválido.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formulario de Acompañante si menor de 18 -->
+            <div
+              *ngIf="showCompanion"
+              [formGroup]="companionForm"
+              class="card mt-4 shadow-sm"
+            >
+              <!-- Mensaje de advertencia si la edad del acompañante es <18 -->
+              <div
+                *ngIf="
+                  companionForm.get('birthDate')?.touched && companionAge < 18
+                "
+                class="alert alert-warning"
+              >
+                El acompañante debe ser mayor de edad; no se puede registrar.
+              </div>
+
+              <div class="card-body">
+                <h5 class="card-title mb-3">Datos del Acompañante</h5>
+                <div class="row gy-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Nombre</label>
+                    <input formControlName="firstName" class="form-control" />
+                    <div
+                      *ngIf="
+                        companionForm.get('firstName')!.touched &&
+                        companionForm.get('firstName')!.hasError('required')
+                      "
+                      class="text-danger small"
+                    >
+                      Nombre requerido.
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Apellido</label>
+                    <input formControlName="lastName" class="form-control" />
+                    <div
+                      *ngIf="
+                        companionForm.get('lastName')!.touched &&
+                        companionForm.get('lastName')!.hasError('required')
+                      "
+                      class="text-danger small"
+                    >
+                      Apellido requerido.
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Documento</label>
+                    <input formControlName="document" class="form-control" />
+                    <div
+                      *ngIf="
+                        companionForm.get('document')!.touched &&
+                        companionForm.get('document')!.hasError('required')
+                      "
+                      class="text-danger small"
+                    >
+                      Documento requerido.
+                    </div>
+                  </div>
+                  <!-- Tipo Documento Acompañante -->
+                  <div class="col-md-4">
+                    <label class="form-label">Tipo Documento</label>
+                    <select formControlName="documentType" class="form-select">
+                      <option value="" disabled>Seleccione...</option>
+                      <option
+                        *ngFor="let t of documentTypes"
+                        [value]="t.codeTypeDocument"
+                      >
+                        {{ t.nameDocumentType }}
+                      </option>
+                    </select>
+                    <div
+                      *ngIf="
+                        companionForm.get('documentType')?.touched &&
+                        companionForm.get('documentType')?.hasError('required')
+                      "
+                      class="text-danger small"
+                    >
+                      Tipo de documento requerido.
+                    </div>
+                  </div>
+                  <!-- Género -->
+                  <div class="col-md-4">
+                    <label class="form-label">Género</label>
+                    <select formControlName="gender" class="form-select">
+                      <option value="" disabled>Seleccione...</option>
+                      <option value="M">Masculino</option>
+                      <option value="F">Femenino</option>
+                      <option value="O">Otro</option>
+                    </select>
+                    <div
+                      *ngIf="
+                        principalForm.get('gender')!.touched &&
+                        principalForm.get('gender')!.hasError('required')
+                      "
+                      class="text-danger small"
+                    >
+                      Género requerido.
+                    </div>
+                  </div>
+                  <!-- Edad Acompañante -->
+                  <div class="col-md-4">
+                    <label class="form-label">Fecha de nacimiento</label>
+                    <input
+                      type="date"
+                      formControlName="birthDate"
+                      class="form-control"
+                    />
+                    <div
+                      *ngIf="
+                        companionForm.get('birthDate')!.touched &&
+                        companionForm.get('birthDate')!.hasError('required')
+                      "
+                      class="text-danger small"
+                    >
+                      Fecha de nacimiento requerida.
+                    </div>
+                    <!-- mostrar edad calculada -->
+                    <div
+                      *ngIf="companionForm.get('birthDate')!.valid"
+                      class="mt-1"
+                    >
+                      <small>Edad: {{ companionAge }} años</small>
+                    </div>
+                    <!-- validación de mayor de edad -->
+                    <div
+                      *ngIf="
+                        companionForm.get('birthDate')!.touched &&
+                        companionAge < 18
+                      "
+                      class="text-warning small"
+                    >
+                      El acompañante debe ser mayor de edad; no podrá
+                      registrarse.
+                    </div>
+                  </div>
+                  <!-- Email -->
+                  <div class="col-md-4">
+                    <label class="form-label">Email</label>
+                    <input
+                      type="email"
+                      formControlName="email"
+                      class="form-control"
+                    />
+                    <div
+                      *ngIf="
+                        companionForm.get('email')?.touched &&
+                        companionForm.get('email')?.hasError('email')
+                      "
+                      class="text-danger small"
+                    >
+                      Email válido requerido.
+                    </div>
+                  </div>
+
+                  <!-- Parentesco -->
+                  <div class="col-md-4">
+                    <label class="form-label">Parentesco</label>
+                    <select formControlName="relationShip" class="form-select">
+                      <option value="" disabled>Seleccione...</option>
+                      <option value="padre">Padre</option>
+                      <option value="madre">Madre</option>
+                      <option value="hermano">Hermano</option>
+                      <option value="amigo">Amigo</option>
+                      <option value="tio">Tío</option>
+                      <option value="tia">Tía</option>
+                      <option value="otro">Otro</option>
+                    </select>
+                    <div
+                      *ngIf="
+                        companionForm.get('relationShip')?.touched &&
+                        companionForm.get('relationShip')?.hasError('required')
+                      "
+                      class="text-danger small"
+                    >
+                      Parentesco requerido.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 text-end">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="
+                  principalForm.invalid ||
+                  (showCompanion &&
+                    (companionForm.invalid ||
+                      companionForm.get('age')?.hasError('min')))
+                "
+              >
+                Agregar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Detalle / edición del Pasajero Principal -->
+      <div *ngIf="mainPassenger" class="card shadow-sm mb-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h5 class="mb-0">Pasajero Principal</h5>
+          <div class="d-flex align-items-center">
+            <button
+              class="btn btn-sm btn-outline-secondary me-2"
+              (click)="editPrincipal()"
+            >
+              Modificar
+            </button>
+            <button
+              class="btn btn-sm btn-outline-danger"
+              (click)="deletePrincipal()"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+        <div class="card-body row">
+          <div class="col-md-3 mb-2">
+            <small class="text-muted">Nombre</small>
+            <p class="mb-0">{{ mainPassenger.firstName }}</p>
+          </div>
+          <div class="col-md-3 mb-2">
+            <small class="text-muted">Apellido</small>
+            <p class="mb-0">{{ mainPassenger.lastName }}</p>
+          </div>
+          <div class="col-md-3 mb-2">
+            <small class="text-muted">Documento</small>
+            <p class="mb-0">{{ mainPassenger.document }}</p>
+          </div>
+          <div class="col-md-3 mb-2">
+            <small class="text-muted">Tipo Documento</small>
+            <p class="mb-0">{{ mainPassenger.documentType }}</p>
+          </div>
+          <div class="col-md-3 mb-2">
+            <small class="text-muted">Edad</small>
+            <p class="mb-0">{{ mainPassenger.age }}</p>
+          </div>
+          <div class="col-md-3">
+            <small class="text-muted">Nacimiento</small>
+            <p class="mb-0">{{ mainPassenger.birthDate }}</p>
+          </div>
+        </div>
+        <!-- información del acompañante si existe -->
+        <div *ngIf="companionData" class="card-body border-top">
+          <h6>Acompañante</h6>
+          <div class="row">
+            <div class="col-md-4">
+              <small class="text-muted">Nombre</small>
+              <p class="mb-0">{{ companionData.firstName }}</p>
+            </div>
+            <div class="col-md-4">
+              <small class="text-muted">Apellido</small>
+              <p class="mb-0">{{ companionData.lastName }}</p>
+            </div>
+            <div class="col-md-4">
+              <small class="text-muted">Documento</small>
+              <p class="mb-0">{{ companionData.document }}</p>
+            </div>
+            <div class="col-md-3 mb-2">
+              <small class="text-muted">Tipo Documento</small>
+              <p class="mb-0">{{ companionData.documentType }}</p>
+            </div>
+            <div class="col-md-3 mb-2">
+              <small class="text-muted">Edad</small>
+              <p class="mb-0">{{ companionData.age }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- === Pasajeros Adicionales === -->
+    <div
+      class="tab-pane fade"
+      [class.show]="activeTab === 'adicionales'"
+      [class.active]="activeTab === 'adicionales'"
+      role="tabpanel"
+    >
+      <!-- Formulario adicionales -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Agregar Pasajero Adicional</h5>
+          <form [formGroup]="additionalForm" (ngSubmit)="addAdditional()">
+            <div class="row gy-3">
+              <div class="col-md-4">
+                <label class="form-label">Nombre</label>
+                <input formControlName="firstName" class="form-control" />
+                <div
+                  *ngIf="
+                    additionalForm.get('firstName')!.touched &&
+                    additionalForm.get('firstName')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Nombre requerido.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Género</label>
+                <select formControlName="gender" class="form-select">
+                  <option value="" disabled>Seleccione...</option>
+                  <option value="M">Masculino</option>
+                  <option value="F">Femenino</option>
+                  <option value="O">Otro</option>
+                </select>
+                <div
+                  *ngIf="
+                    additionalForm.get('gender')!.touched &&
+                    additionalForm.get('gender')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Género requerido.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Tipo Documento</label>
+                <select formControlName="documentType" class="form-select">
+                  <option value="" disabled>Seleccione...</option>
+                  <option
+                    *ngFor="let t of documentTypes"
+                    [value]="t.codeTypeDocument"
+                  >
+                    {{ t.nameDocumentType }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    additionalForm.get('documentType')?.touched &&
+                    additionalForm.get('documentType')?.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Tipo de documento requerido.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Fecha de nacimiento</label>
+                <input
+                  type="date"
+                  formControlName="birthDate"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="
+                    additionalForm.get('birthDate')!.touched &&
+                    additionalForm.get('birthDate')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Fecha de nacimiento requerida.
+                </div>
+                <!-- mostrar edad calculada -->
+                <div *ngIf="additionalForm.get('birthDate')!.valid" class="mt-1">
+                  <small>Edad: {{ additionalAge }} años</small>
+                </div>
+                <!-- validación de mayor de edad -->
+                <div
+                  *ngIf="
+                    additionalForm.get('birthDate')!.touched && additionalAge < 18
+                  "
+                  class="text-warning small"
+                >
+                  El acompañante debe ser mayor de edad; no podrá registrarse.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Apellido</label>
+                <input formControlName="lastName" class="form-control" />
+                <div
+                  *ngIf="
+                    additionalForm.get('lastName')!.touched &&
+                    additionalForm.get('lastName')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Apellido requerido.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  formControlName="email"
+                  class="form-control"
+                />
+                <div
+                  *ngIf="
+                    additionalForm.get('email')?.touched &&
+                    additionalForm.get('email')?.hasError('email')
+                  "
+                  class="text-danger small"
+                >
+                  Email válido requerido.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Documento</label>
+                <input formControlName="document" class="form-control" />
+                <div
+                  *ngIf="
+                    additionalForm.get('document')!.touched &&
+                    additionalForm.get('document')!.hasError('required')
+                  "
+                  class="text-danger small"
+                >
+                  Documento requerido.
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Condición especial</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    formControlName="specialCondition"
+                    id="specialCondition"
+                  />
+                  <label class="form-check-label" for="specialCondition">
+                    Marca si requiere contacto de emergencia
+                  </label>
+                </div>
+              </div>
+            </div>
+            <!-- … el bloque de emergencia con nuevo *ngIf … -->
+            <div
+              *ngIf="showEmergencyContact"
+              [formGroup]="emergencyContactForm"
+              class="card mt-3 p-3 border-warning"
+            >
+              <h6 class="text-warning">Contacto de emergencia</h6>
+              <div class="row gy-3">
+                <!-- Parentesco -->
+                <div class="col-md-4">
+                  <label class="form-label">Parentesco</label>
+                  <select formControlName="relationShip" class="form-select">
+                    <option value="" disabled>Seleccione...</option>
+                    <option value="padre">Padre/Madre</option>
+                    <option value="tutor">Tutor</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                  <div
+                    *ngIf="
+                      emergencyContactForm.get('relationShip')!.touched &&
+                      emergencyContactForm
+                        .get('relationShip')!
+                        .hasError('required')
+                    "
+                    class="text-danger small"
+                  >
+                    Parentesco requerido.
+                  </div>
+                </div>
+                <!-- Nombre -->
+                <div class="col-md-4">
+                  <label class="form-label">Nombre</label>
+                  <input formControlName="name" class="form-control" />
+                  <div
+                    *ngIf="
+                      emergencyContactForm.get('name')!.touched &&
+                      emergencyContactForm
+                        .get('name')!
+                        .hasError('required')
+                    "
+                    class="text-danger small"
+                  >
+                    Nombre requerido.
+                  </div>
+                </div>
+                <!-- Teléfono -->
+                <div class="col-md-4">
+                  <label class="form-label">Teléfono</label>
+                  <input formControlName="phone" class="form-control" />
+                  <div
+                    *ngIf="
+                      emergencyContactForm.get('phone')!.touched &&
+                      emergencyContactForm
+                        .get('phone')!
+                        .hasError('required')
+                    "
+                    class="text-danger small"
+                  >
+                    Teléfono requerido.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 text-end">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="additionalForm.invalid"
+              >
+                Agregar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Listado de adicionales -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Pasajeros Agregados</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li
+            *ngFor="let p of additionalPassengers"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <strong>{{ p.firstName }} {{ p.lastName }}</strong
+              ><br />
+              <small class="text-muted">{{ p.document }}</small>
+            </div>
+            <button
+              class="btn btn-sm btn-outline-danger"
+              (click)="removeAdditional(p)"
+            >
+              ×
+            </button>
+          </li>
+          <li
+            *ngIf="additionalPassengers.length === 0"
+            class="list-group-item text-center text-muted"
+          >
+            No hay pasajeros adicionales
+          </li>
+        </ul>
+      </div>
+
+      <!-- Dual-box de servicios -->
+      <div class="row gx-4">
+        <div class="col-md-5">
+          <div class="card shadow-sm mb-3">
+            <div class="card-header">Servicios Disponibles</div>
+            <ul class="list-group list-group-flush">
+              <li
+                *ngFor="let s of availableServices"
+                class="list-group-item d-flex justify-content-between align-items-center"
+                [class.disabled]="s.quantity === 0"
+                (click)="toSelected(s)"
+              >
+                <div>
+                  {{ s.nameService }}
+                  <small class="text-muted"
+                    >— ${{ s.value }} (×{{ s.quantity }})</small
+                  >
+                </div>
+                <i
+                  *ngIf="s.quantity === 0"
+                  class="bi bi-slash-circle text-secondary"
+                ></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="col-md-2 d-flex flex-column justify-content-center align-items-center"
+        >
+          <button
+            class="btn btn-primary"
+            (click)="removeAllSelected()"
+            [disabled]="selectedServices.length === 0"
+          >
+            &lt; Todos
+          </button>
+        </div>
+        <div class="col-md-5">
+          <div class="card shadow-sm">
+            <div class="card-header">Servicios Seleccionados</div>
+            <ul class="list-group list-group-flush">
+              <li
+                *ngFor="let s of selectedServices"
+                class="list-group-item d-flex justify-content-between align-items-center"
+              >
+                <div>
+                  {{ s.nameService }}
+                  <small class="text-muted">— ${{ s.value }}</small>
+                </div>
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-primary me-2">{{
+                    s.selectedCount
+                  }}</span>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="removeSelected(s)"
+                  >
+                    ×
+                  </button>
+                </div>
+              </li>
+              <li
+                *ngIf="selectedServices.length === 0"
+                class="list-group-item text-center text-muted"
+              >
+                Ningún servicio seleccionado
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Guardar Reserva -->
+  <div class="mt-4 text-center">
+    <button
+      class="btn btn-success"
+      (click)="saveAll()"
+      [disabled]="!mainPassenger && additionalPassengers.length === 0"
+    >
+      <i class="bi bi-save me-2"></i>
+      Guardar Reserva
+    </button>
+  </div>
+</div>

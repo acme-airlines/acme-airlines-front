@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
       next: (response: TokenResponse) => {
         console.log('Autenticación exitosa', response);
         // Almacena el token (por ejemplo, en localStorage)
-        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('access_token', response.accessToken);
         // Redirige a una ruta protegida o al dashboard
         this.router.navigate(['/dashboard']);
       },

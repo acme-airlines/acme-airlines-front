@@ -1,5 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FlightResponse } from '@sharedModule/models/flight-response';
+import { InformationTariffFly } from '@sharedModule/models/informationTariffFly';
+import { PassengersRegisterService } from '@sharedModule/service/passengersRegister.service';
 
 
 interface FareType {
@@ -17,47 +20,26 @@ interface FareType {
 export class FlightInformationLetterComponent   {
   @Input() data!: FlightResponse;
 
+  constructor(private passengerRegisterService:PassengersRegisterService, private router:Router){}
+
   // Control de visibilidad del listado de tarifas
   showFareTypes = false;
-
-  // Definición de los tipos de tarifa y sus beneficios
-  fareTypes: FareType[] = [
-    {
-      code: 'economica',
-      label: 'Económica',
-      price: 59,        // <-- precio
-      benefits: [
-        'Asiento estándar',
-        'Equipaje de mano permitido',
-        'Cancelación con cargo',
-      ],
-    },
-    {
-      code: 'semi-economica',
-      label: 'Semi-económica',
-      price: 69,
-      benefits: [
-        'Espacio extra para piernas',
-        'Equipaje de mano + 1 documentado',
-        'Cambio con recargo moderado',
-      ],
-    },
-    {
-      code: 'premium',
-      label: 'Premium',
-      price: 89,
-      benefits: [
-        'Asiento premium reclinable',
-        '2 equipajes documentados gratis',
-        'Cambio/cancelación sin cargo',
-        'Acceso a salón VIP',
-      ],
-    },
-  ];
 
 
   // Alterna la visibilidad del listado
   toggleFareTypes(): void {
     this.showFareTypes = !this.showFareTypes;
   }
+
+  registrarPassenger(codigoVuelo:string, codigoTarifa:string){
+
+    const informacion:InformationTariffFly = {
+      codigoVuelo: codigoVuelo,
+      codigoTarifaSeleccionado: codigoTarifa
+    }
+    this.passengerRegisterService.setInformation(informacion)
+    this.router.navigate(['/passengers-register'], {replaceUrl: true})
+
+  }
+
 }

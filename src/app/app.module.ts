@@ -5,6 +5,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { AppRoutingModule } from "./app.routes";
 import { SharedModule } from "./shared/shared.module";
 import { NgxSpinnerModule } from "ngx-spinner";
+import { CoreModule } from "@core/core.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -13,6 +14,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
         HttpClientModule,
         AppRoutingModule,
         SharedModule, 
+        CoreModule,
         NgxSpinnerModule.forRoot({ type: 'square-jelly-box' }),
     ],
     bootstrap: [AppComponent]

@@ -1,9 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TokenResponse } from '../models/token-response';
 import { environment } from '@env/environment';
-import { CreatePassenger } from '@sharedModule/models/create-passenger';
+import { BookingRequest } from '@sharedModule/models/booking-request';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +10,7 @@ import { CreatePassenger } from '@sharedModule/models/create-passenger';
 export class PassengerService {
   constructor(private http: HttpClient) {}
 
-  createPassager(passengerInfo: CreatePassenger): Observable<TokenResponse> {
-    return this.http.post<TokenResponse>(`${environment.api.postCreatePassenger}`, passengerInfo);
+  createPassager(bookinRequest: BookingRequest): Observable<string[]> {
+    return this.http.post<string[]>(`${environment.api.postCreatePassenger}`, bookinRequest);
   }
 }

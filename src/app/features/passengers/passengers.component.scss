@@ -1,0 +1,105 @@
+:host {
+  display: block;
+  background: #f8f9fa;
+}
+
+.container {
+  max-width: 900px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Nav pills */
+.nav-pills .nav-link {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+.nav-pills .nav-link.active {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+/* Tarjetas */
+.card {
+  border: none;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+.card-header {
+  background: #ffffff;
+  font-weight: 600;
+}
+.card-body {
+  background: #ffffff;
+}
+
+/* List-group general */
+.list-group {
+  margin: 0;
+}
+.list-group-item {
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  padding: 0.75rem 1.25rem;
+}
+.list-group-item.active {
+  /* Más oscuro que antes para que no pase desapercibido */
+  background-color: #cfe2ff !important;
+  color: #000 !important;
+}
+
+/* Botones de quitar */
+.btn-outline-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+.btn-outline-danger i {
+  font-size: 1.1rem;
+  color: #dc3545;
+}
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* Botones secundario (mover de vuelta) */
+.btn-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+.btn-secondary:hover {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+/* Centrado de iconos */
+.d-flex .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ajustes móviles */
+@media (max-width: 576px) {
+  .nav-pills .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+  .row.gx-4 {
+    flex-direction: column;
+  }
+  .row.gx-4 > .col-md-2 {
+    margin: 1rem 0;
+  }
+}
+
+/* passengers.component.scss */
+
+.list-group-item.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+

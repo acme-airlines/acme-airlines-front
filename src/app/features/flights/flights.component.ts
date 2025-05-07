@@ -6,6 +6,11 @@ import { FlightsService } from '@sharedModule/service/flights.service';
 import { Flight } from '@sharedModule/models/flight';
 import { FlightFilterRequest } from '@sharedModule/models/flight-filter-request';
 import { FlightResponse } from '@sharedModule/models/flight-response';
+import { FeeService } from '@sharedModule/service/fee.service';
+import { of } from 'rxjs';
+import { FeesFlight } from '@sharedModule/models/feesFlight';
+import { AuthService } from '@sharedModule/service/auth.service';
+import { TokenResponse } from '@sharedModule/models/token-response';
 
 @Component({
   selector: 'acme-airlines-flights',
@@ -72,12 +77,31 @@ flights = [
   constructor(
     private fb: FormBuilder,
     private cityService: CityService,
-    private flightsService: FlightsService
+    private flightsService: FlightsService,
+    private feeService:FeeService,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
+    this.iniciarSesion()
     this.initForm();
-    this.loadCities();
+
+  }
+
+  private iniciarSesion(): void {
+    
+     // Consume el endpoint de client-oauth que se encarga de autenticar y generar el token
+        this.authService.login({username:'1qwe.doe@example.com', password: '12345'}).subscribe({
+          next: (response: TokenResponse) => {
+            console.log('Autenticación exitosa', response);
+            // Almacena el token (por ejemplo, en localStorage)
+            localStorage.setItem('access_token', response.accessToken);
+            this.loadCities();
+          },
+          error: (err) => {
+            console.error('Error de autenticación', err);
+          },
+        });
   }
 
   private initForm(): void {
@@ -163,7 +187,16 @@ flights = [
         next: (flightsApi: FlightResponse[]) => {
           this.flightDetail = flightsApi;
           this.searchClicked = true;
-        }
+        },
+        complete: (() => {
+          for(const flight of this.flightDetail){
+            this.feeService.getFeesForFlight(flight.codigoVuelo!).subscribe({
+              next: (feesInformation:FeesFlight) => {
+                flight.fees = feesInformation.fees;
+              }
+            })
+          }
+        })
       })
     } else {
       this.flightSearchForm.markAllAsTouched();

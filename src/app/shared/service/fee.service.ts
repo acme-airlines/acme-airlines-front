@@ -1,13 +1,13 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TokenResponse } from '../models/token-response';
 import { environment } from '@env/environment';
+import { FeesFlight } from '@sharedModule/models/feesFlight';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class FeeService {
   // URL del endpoint expuesto en client-oauth
   constructor(private http: HttpClient) {}
 
@@ -15,7 +15,8 @@ export class AuthService {
    * Envía las credenciales al endpoint de client-oauth para obtener el token.
    * Se espera que el endpoint reciba un objeto JSON con "correo" y "password".
    */
-  login(credentials: { username: string; password: string }): Observable<TokenResponse> {
-    return this.http.post<TokenResponse>(`${environment.api.postPublicAuthLogin}`, credentials);
+  getFeesForFlight(flightCode:string): Observable<FeesFlight> {
+    const params = new HttpParams().set('flightCode', flightCode);
+    return this.http.get<FeesFlight>(`${environment.api.getFeeAvailbleByFlight}`, {params});
   }
 }

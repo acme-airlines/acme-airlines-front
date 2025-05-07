@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CreatePassenger } from '@sharedModule/models/create-passenger';
 import { DocumentType } from '@sharedModule/models/document-type';
 import { DocumentTypeService } from '@sharedModule/service/document-type.service';
-import { PassengerService } from '@sharedModule/service/passenger.service';
+import { UserService } from '@sharedModule/service/user.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private documentTypeService: DocumentTypeService,
-    private passengerService: PassengerService,
+    private userService: UserService,
     private router: Router,
     private spinner: NgxSpinnerService
   ){}
@@ -80,7 +80,7 @@ export class RegisterComponent implements OnInit {
       genderPassenger: genre,
       password: password
     }
-    this.passengerService.createPassager(passenger).subscribe(
+    this.userService.createUser(passenger).subscribe(
       {
         next: (data) => {
           console.log('Pasajero creado:', data);

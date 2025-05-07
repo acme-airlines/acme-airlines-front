@@ -1,14 +1,17 @@
 module.exports = {
-  "/auth/**": {
-    "target": "http://localhost:8081/api/v1/public/auth",
+  
+  "/auth": {
+    "target": "https://api-acmeairlines.duckdns.org/oauth/api/v1/public/auth",
     "secure": false,
+    "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": {
-      "^/auth": ""
+    "pathRewrite": { "^/auth": "" },
+    "headers": {
+      "Origin": "https://api-acmeairlines.duckdns.org"
     }
   },
   "/document-type/**": {
-    "target": "http://localhost:8001/api/v1/public/document-type",
+    "target": "http://localhost:8001/api/v1/document-type",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -16,7 +19,7 @@ module.exports = {
     }
   },
   "/passenger/**": {
-    "target": "http://localhost:8001/api/v1/public/passenger",
+    "target": "http://localhost:8001/api/v1/passenger",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -24,7 +27,7 @@ module.exports = {
     }
   },
   "/cities/**": {
-    "target": "http://localhost:8002/flights/api/v1/public/cities",
+    "target": "http://localhost:8002/flights/api/v1/cities",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -32,11 +35,43 @@ module.exports = {
     }
   },
   "/flights/**": {
-    "target": "http://localhost:8002/flights/api/v1/public/flights",
+    "target": "http://localhost:8002/flights/api/v1/flights",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
       "^/flights": ""
+    }
+  },
+  "/fees/**": {
+    "target": "http://localhost:8003/fees-tarif/api/v1/fees",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/fees": ""
+    }
+  },
+  "/service-fee/**": {
+    "target": "http://localhost:8003/fees-tarif/api/v1/service-fee",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/service-fee": ""
+    }
+  },
+  "/user/**": {
+    "target": "http://localhost:8001/api/v1/user",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/user": ""
+    }
+  },
+  "/service-passenger/**": {
+    "target": "http://localhost:8003/fees-tarif/api/v1/service-passenger",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/service-passenger": ""
     }
   }
 }

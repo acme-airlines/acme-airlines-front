@@ -1,5 +1,5 @@
 export interface TokenResponse {
-    access_token: string;
+  accessToken: string;
     token_type: string;
     id_token?: string;
     expires_in: number;
