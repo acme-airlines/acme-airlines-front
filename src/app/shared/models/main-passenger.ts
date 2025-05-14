@@ -10,4 +10,5 @@ export interface MainPassenger{
     email: string;
     age: number;
     companion?: Companion
+    rol:string;
 }

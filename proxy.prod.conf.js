@@ -58,7 +58,7 @@ module.exports = {
     }
   },
   "/fees/**": {
-    "target": "https://api-acmeairlines.duckdns.org/tariff/api/v1/fees",
+    "target": "https://api-acmeairlines.duckdns.org/fees-tariff/api/v1/fees",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -70,7 +70,7 @@ module.exports = {
     }
   },
   "/service-fee/**": {
-    "target": "https://api-acmeairlines.duckdns.org/tariff/api/v1/service-fee",
+    "target": "https://api-acmeairlines.duckdns.org/fees-tariff/api/v1/service-fee",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -94,7 +94,7 @@ module.exports = {
     }
   },
   "/service-passenger/**": {
-    "target": "https://api-acmeairlines.duckdns.org/tariff/api/v1/service-passenger",
+    "target": "https://api-acmeairlines.duckdns.org/fees-tariff/api/v1/service-passenger",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",

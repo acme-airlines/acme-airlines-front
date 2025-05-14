@@ -4,4 +4,6 @@ export class InformationTariffFly {
 
     public codigoTarifaSeleccionado?:string
 
+    public valorTarifaSeleccionado?:number;
+
 }

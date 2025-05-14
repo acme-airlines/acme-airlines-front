@@ -31,11 +31,12 @@ export class FlightInformationLetterComponent   {
     this.showFareTypes = !this.showFareTypes;
   }
 
-  registrarPassenger(codigoVuelo:string, codigoTarifa:string){
+  registrarPassenger(codigoVuelo:string, codigoTarifa:string, valorTarifa:string){
 
     const informacion:InformationTariffFly = {
       codigoVuelo: codigoVuelo,
-      codigoTarifaSeleccionado: codigoTarifa
+      codigoTarifaSeleccionado: codigoTarifa,
+      valorTarifaSeleccionado: Number(valorTarifa)
     }
     this.passengerRegisterService.setInformation(informacion)
     this.router.navigate(['/passengers-register'], {replaceUrl: true})

@@ -17,6 +17,7 @@ import { ServicePassengerService } from '@sharedModule/service/service-passenger
 import { ServicePassengerRequest } from '@sharedModule/models/service-passenger-request';
 
 interface Passenger {
+  rol: string;
   firstName: string;
   lastName: string;
   document: string;
@@ -28,8 +29,6 @@ interface Passenger {
   relationShip?: string;
   specialCondition: boolean;
 }
-
-
 
 @Component({
   selector: 'acme-airlines-passengers',
@@ -60,6 +59,26 @@ export class PassengersComponent implements OnInit {
   availableServices: ServiceExtraFlightResponseDto[] = [];
   emergencyContactForm: FormGroup; // ← Nuevo
 
+  // --------------------------------------------------
+  // ↓ NUEVAS PROPIEDADES ↓
+  // --------------------------------------------------
+  // Clave del pasajero actualmente seleccionado
+  selectedPassengerKey: string | null = null;
+
+  // Lista original de servicios (plantilla)
+  baseServices: ServiceExtraFlightResponseDto[] = [];
+
+  // Map de servicios por pasajero
+  servicesByPassenger: {
+    [key: string]: {
+      available: ServiceExtraFlightResponseDto[];
+      selected: ServiceExtraFlightResponseDto[];
+    };
+  } = {};
+
+  // Para generar IDs únicas de adicionales
+  nextAdditionalId = 0;
+
   constructor(
     private fb: FormBuilder,
     private documentTypeService: DocumentTypeService,
@@ -89,7 +108,7 @@ export class PassengersComponent implements OnInit {
       gender: ['', Validators.required],
       birthDate: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]], // ← añadido
-      specialCondition: [false]                      // ← checkbox
+      specialCondition: [false], // ← checkbox
     });
 
     // inicializa emergencyContactForm vacío (se validará sólo en menores)
@@ -192,8 +211,11 @@ export class PassengersComponent implements OnInit {
 
   /** Mostrar contacto de emergencia si menor o condición especial marcada **/
   get showEmergencyContact(): boolean {
-    return this.additionalForm.get('birthDate')!.valid && this.additionalAge < 18
-        || this.additionalForm.get('specialCondition')!.value;
+    return (
+      (this.additionalForm.get('birthDate')!.valid &&
+        this.additionalAge < 18) ||
+      this.additionalForm.get('specialCondition')!.value
+    );
   }
 
   iniciarData() {
@@ -216,6 +238,7 @@ export class PassengersComponent implements OnInit {
             quantity: Number(s.quantity) || 0,
             selectedCount: 0,
           }));
+          this.baseServices = [...this.availableServices];
         }),
         finalize(() => this.spinner.hide())
       )
@@ -255,23 +278,22 @@ export class PassengersComponent implements OnInit {
   // agregar pasajero principal y acompañante
   addPrincipal(): void {
     if (this.principalForm.invalid) return;
-
     const m = this.principalForm.value;
-    this.mainPassenger = {
-      ...m,
-      age: this.age,
-    };
+    // asignamos ID fijo para principal
+    this.mainPassenger = { rol: 'principal', ...m, age: this.age };
 
     if (this.age < 18) {
-      this.companionForm.markAllAsTouched();
-      if (this.companionForm.invalid) return;
+      // asignamos ID fijo para acompañante
       const c = this.companionForm.value;
-      this.companionData = {
-        ...c,
-        age: this.companionAge,
-      };
+      this.companionData = { rol: 'companion', ...c, age: this.companionAge };
     } else {
       this.companionData = undefined;
+    }
+
+    // inicializamos servicios para cada uno
+    this.initializeServicesFor('principal');
+    if (this.companionData) {
+      this.initializeServicesFor('companion');
     }
 
     this.principalForm.reset();
@@ -309,26 +331,54 @@ export class PassengersComponent implements OnInit {
   deletePrincipal(): void {
     this.mainPassenger = undefined;
     this.companionData = undefined;
+    // limpiamos del map
+    delete this.servicesByPassenger['principal'];
+    delete this.servicesByPassenger['companion'];
     this.principalForm.reset();
     this.companionForm.reset();
   }
 
-  // agregar pasajero adicional
+  // Cuando agregas un pasajero adicional
   addAdditional(): void {
     if (this.additionalForm.invalid) return;
     if (this.showEmergencyContact && this.emergencyContactForm.invalid) return;
 
-    // Combina data adicional + posible emergencia
-    const p = this.additionalForm.value as any;
-    if (this.showEmergencyContact) {
+    const rol = `additional_${this.nextAdditionalId++}`;
+    const p: any = {
+      rol,
+      ...this.additionalForm.value,
+      age: this.additionalAge,
+    };
+    if (this.showEmergencyContact)
       p.emergencyContact = this.emergencyContactForm.value;
-    }
-    p.age = this.additionalAge;
-    this.additionalPassengers.push(p);
 
-    // Limpia ambos
+    this.additionalPassengers.push(p);
+    // inicializamos sus servicios
+    this.initializeServicesFor(rol);
+
     this.additionalForm.reset({ specialCondition: false });
     this.emergencyContactForm.reset();
+  }
+
+  /** Crea un contexto de servicios clonado a partir de baseServices */
+  initializeServicesFor(key: string) {
+    this.servicesByPassenger[key] = {
+      available: this.availableServices,
+      selected: [],
+    };
+  }
+
+  /** Cambia el pasajero activo para el dual-box */
+  selectPassenger(key: string) {
+    this.selectedPassengerKey = key;
+  }
+
+  getPassengerServices(key: string) {
+    return this.servicesByPassenger[key]?.available || [];
+  }
+
+  getPassengerSelectedServices(key: string) {
+    return this.servicesByPassenger[key]?.selected || [];
   }
 
   // eliminar adicional
@@ -339,106 +389,157 @@ export class PassengersComponent implements OnInit {
   }
 
   // dual-box servicios
-  toSelected(service: ServiceExtraFlightResponseDto): void {
-    if (service.quantity! <= 0) return;
-    service.quantity!--;
-    service.selectedCount!++;
+  toSelected(s: ServiceExtraFlightResponseDto) {
+    if (!this.selectedPassengerKey) return;
+    const ctx = this.servicesByPassenger[this.selectedPassengerKey];
+    const av = ctx.available.find((x) => x.codeService === s.codeService);
+    if (!av || av.quantity! <= 0) return;
+    av.quantity!--;
+    const sel = ctx.selected.find((x) => x.codeService === s.codeService);
+    if (sel) {
+      sel.selectedCount!++;
+    } else {
+      ctx.selected.push({ ...av, selectedCount: 1 });
+    }
   }
 
-  removeSelected(service: ServiceExtraFlightResponseDto): void {
-    if (service.selectedCount! <= 0) return;
-    service.selectedCount!--;
-    service.quantity!++;
+  removeSelected(s: ServiceExtraFlightResponseDto) {
+    if (!this.selectedPassengerKey) return;
+    const ctx = this.servicesByPassenger[this.selectedPassengerKey];
+    const sel = ctx.selected.find((x) => x.codeService === s.codeService);
+    if (!sel) return;
+    sel.selectedCount!--;
+    if (sel.selectedCount! <= 0) {
+      ctx.selected = ctx.selected.filter(
+        (x) => x.codeService !== s.codeService
+      );
+    }
+    const av = ctx.available.find((x) => x.codeService === s.codeService);
+    if (av) av.quantity!++;
   }
 
-  removeAllSelected(): void {
-    this.availableServices.forEach((s) => {
-      s.quantity! += s.selectedCount!;
-      s.selectedCount = 0;
+  removeAllSelected() {
+    if (!this.selectedPassengerKey) return;
+    const ctx = this.servicesByPassenger[this.selectedPassengerKey];
+    ctx.selected.forEach((s) => {
+      const av = ctx.available.find((x) => x.codeService === s.codeService);
+      if (av) av.quantity! += s.selectedCount!;
     });
+    ctx.selected = [];
   }
 
-   /** Llama a este método para armar el objeto y guardarlo en BD */
-   saveAll(): void {
+  /** Para mostrar nombre en el botón de adicionales */
+  getAdditionalPassengerName(key: string) {
+    const p = this.additionalPassengers.find((x) => x.rol === key);
+    return p ? `${p.firstName} ${p.lastName}` : '';
+  }
+
+  // passengers.component.ts
+  get totalAmount(): number {
+    const plan = this.info?.valorTarifaSeleccionado ?? 0;
+
+    // suma de extras para TODOS los pasajeros
+    const extras = Object.values(this.servicesByPassenger).reduce(
+      (acc, ctx) =>
+        acc +
+        ctx.selected.reduce((sum, s) => sum + s.value! * s.selectedCount!, 0),
+      0
+    );
+
+    return plan + extras;
+  }
+
+  /** Llama a este método para armar el objeto y guardarlo en BD */
+  saveAll(): void {
     if (!this.mainPassenger) {
       console.error('No hay pasajero principal registrado');
       return;
     }
-
+    // Mostrar spinner
+    this.spinner.show();
     // 1) Construye el pasajero principal
-    const main:MainPassenger = {
-      firstName:    this.mainPassenger.firstName,
-      lastName:     this.mainPassenger.lastName,
-      document:     this.mainPassenger.document,
+    const main: MainPassenger = {
+      firstName: this.mainPassenger.firstName,
+      lastName: this.mainPassenger.lastName,
+      document: this.mainPassenger.document,
       documentType: this.mainPassenger.documentType,
-      birthDate:    this.mainPassenger.birthDate,
-      gender:       this.mainPassenger.gender,
-      email:        this.mainPassenger.email,
-      age:          this.mainPassenger.age,
-      ...(this.companionData && {     // si existe acompañante, lo añade
+      birthDate: this.mainPassenger.birthDate,
+      gender: this.mainPassenger.gender,
+      email: this.mainPassenger.email,
+      age: this.mainPassenger.age,
+      rol: this.mainPassenger.rol,
+      ...(this.companionData && {
+        // si existe acompañante, lo añade
         companion: {
-          firstName:    this.companionData.firstName,
-          lastName:     this.companionData.lastName,
-          document:     this.companionData.document,
-          documentType:this.companionData.documentType,
-          birthDate:    this.companionData.birthDate,
-          gender:       this.companionData.gender,
-          email:        this.companionData.email,
+          firstName: this.companionData.firstName,
+          lastName: this.companionData.lastName,
+          document: this.companionData.document,
+          documentType: this.companionData.documentType,
+          birthDate: this.companionData.birthDate,
+          gender: this.companionData.gender,
+          email: this.companionData.email,
           relationShip: this.companionData.relationShip!,
-          age:          this.companionData.age
-        }
-      })
+          age: this.companionData.age,
+          rol: this.companionData.rol
+        },
+      }),
     };
 
     // 2) Construye los pasajeros adicionales
-    const additionals:AdditionalPassenger[] = this.additionalPassengers.map(p => {
-      const base = {
-        firstName:    p.firstName,
-        lastName:     p.lastName,
-        document:     p.document,
-        documentType:p.documentType,
-        birthDate:    p.birthDate,
-        gender:       p.gender,
-        email:        p.email,
-        specialCondition: p.specialCondition,
-        relationShip: p.relationShip!,
-        age:          p.age
-      };
-      // Si le añadiste emergencyContact en el payload:
-      const ec = (p as AdditionalPassenger).emergencyContact;
-      return ec
-        ? { ...base, emergencyContact: ec }
-        : base;
-    });
+    const additionals: AdditionalPassenger[] = this.additionalPassengers.map(
+      (p) => {
+        const base = {
+          firstName: p.firstName,
+          lastName: p.lastName,
+          document: p.document,
+          documentType: p.documentType,
+          birthDate: p.birthDate,
+          gender: p.gender,
+          email: p.email,
+          specialCondition: p.specialCondition,
+          relationShip: p.relationShip!,
+          age: p.age,
+          rol: p.rol
+        };
+        // Si le añadiste emergencyContact en el payload:
+        const ec = (p as AdditionalPassenger).emergencyContact;
+        return ec ? { ...base, emergencyContact: ec } : base;
+      }
+    );
 
     // 3) Construye la lista de servicios
-    const services:ServicesExt[] = this.selectedServices.map(s => ({
-      codeService: s.codeService!,            // o el campo que identifique tu servicio
-      quantity:  s.selectedCount!
-    }));
+  // Construye un mapa { passengerKey: ServicesExt[] }
+  const servicesMap: { [passengerKey: string]: ServicesExt[] } =
+    Object.entries(this.servicesByPassenger).reduce((map, [key, ctx]) => {
+      map[key] = ctx.selected.map(s => ({
+        codeService: s.codeService!,
+        quantity: s.selectedCount!,
+      }));
+      return map;
+    }, {} as { [passengerKey: string]: ServicesExt[] });
 
     // 4) Arma el request completo
     const payload: BookingRequest = {
-      codeFlight:           this.info!.codigoVuelo!,
-      mainPassenger:       main,
+      codeFlight: this.info!.codigoVuelo!,
+      mainPassenger: main,
       feeCode: this.info?.codigoTarifaSeleccionado!,
       additionalPassengers: additionals,
       //services: services
     };
 
-    this.passengerService.createPassager(payload)
-    .pipe(
-      tap((data: string[]) => {
-        const request:ServicePassengerRequest = {
-          codeFlight: this.info?.codigoVuelo!,
-          service: services,
-          codePassengers: data
-        }
-        this.servicePassenger.createServicePassenger(request).subscribe();
-      }),
-      finalize(() => this.spinner.hide())
-    )
-    .subscribe();
-  
+    this.passengerService
+      .createPassager(payload)
+      .pipe(
+        tap((data: Record<string, string>) => {
+          const request: ServicePassengerRequest = {
+            codeFlight: this.info?.codigoVuelo!,
+            servicesByPassenger: servicesMap,
+            codePassengers: data,
+          };
+          this.servicePassenger.createServicePassenger(request).subscribe();
+        }),
+        finalize(() => this.spinner.hide())
+      )
+      .subscribe();
   }
 }

@@ -10,7 +10,7 @@ import { BookingRequest } from '@sharedModule/models/booking-request';
 export class PassengerService {
   constructor(private http: HttpClient) {}
 
-  createPassager(bookinRequest: BookingRequest): Observable<string[]> {
-    return this.http.post<string[]>(`${environment.api.postCreatePassenger}`, bookinRequest);
+  createPassager(bookinRequest: BookingRequest): Observable<Record<string, string>> {
+    return this.http.post<Record<string, string>>(`${environment.api.postCreatePassenger}`, bookinRequest);
   }
 }

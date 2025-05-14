@@ -524,13 +524,17 @@
                   Fecha de nacimiento requerida.
                 </div>
                 <!-- mostrar edad calculada -->
-                <div *ngIf="additionalForm.get('birthDate')!.valid" class="mt-1">
+                <div
+                  *ngIf="additionalForm.get('birthDate')!.valid"
+                  class="mt-1"
+                >
                   <small>Edad: {{ additionalAge }} años</small>
                 </div>
                 <!-- validación de mayor de edad -->
                 <div
                   *ngIf="
-                    additionalForm.get('birthDate')!.touched && additionalAge < 18
+                    additionalForm.get('birthDate')!.touched &&
+                    additionalAge < 18
                   "
                   class="text-warning small"
                 >
@@ -631,9 +635,7 @@
                   <div
                     *ngIf="
                       emergencyContactForm.get('name')!.touched &&
-                      emergencyContactForm
-                        .get('name')!
-                        .hasError('required')
+                      emergencyContactForm.get('name')!.hasError('required')
                     "
                     class="text-danger small"
                   >
@@ -647,9 +649,7 @@
                   <div
                     *ngIf="
                       emergencyContactForm.get('phone')!.touched &&
-                      emergencyContactForm
-                        .get('phone')!
-                        .hasError('required')
+                      emergencyContactForm.get('phone')!.hasError('required')
                     "
                     class="text-danger small"
                   >
@@ -702,14 +702,60 @@
         </ul>
       </div>
 
-      <!-- Dual-box de servicios -->
-      <div class="row gx-4">
+      <!-- Selector de pasajeros para servicios -->
+      <div
+        class="card shadow-sm mb-3"
+        *ngIf="mainPassenger || companionData || additionalPassengers.length"
+      >
+        <div class="card-body d-flex flex-wrap gap-2">
+          <button
+            *ngIf="mainPassenger"
+            class="btn"
+            [ngClass]="{
+              'btn-primary': selectedPassengerKey === 'principal',
+              'btn-outline-primary': selectedPassengerKey !== 'principal'
+            }"
+            (click)="selectPassenger('principal')"
+          >
+            Principal
+          </button>
+
+          <button
+            *ngIf="companionData"
+            class="btn"
+            [ngClass]="{
+              'btn-primary': selectedPassengerKey === 'companion',
+              'btn-outline-primary': selectedPassengerKey !== 'companion'
+            }"
+            (click)="selectPassenger('companion')"
+          >
+            Acompañante
+          </button>
+
+          <ng-container *ngFor="let p of additionalPassengers">
+            <button
+              class="btn"
+              [ngClass]="{
+                'btn-primary': selectedPassengerKey === p.rol,
+                'btn-outline-primary': selectedPassengerKey !== p.rol
+              }"
+              (click)="selectPassenger(p.rol)"
+            >
+              {{ p.firstName }} {{ p.lastName }}
+            </button>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Dual-box dinámico según pasajero seleccionado -->
+      <div *ngIf="selectedPassengerKey" class="row gx-4">
+        <!-- Servicios disponibles -->
         <div class="col-md-5">
           <div class="card shadow-sm mb-3">
             <div class="card-header">Servicios Disponibles</div>
             <ul class="list-group list-group-flush">
               <li
-                *ngFor="let s of availableServices"
+                *ngFor="let s of getPassengerServices(selectedPassengerKey)"
                 class="list-group-item d-flex justify-content-between align-items-center"
                 [class.disabled]="s.quantity === 0"
                 (click)="toSelected(s)"
@@ -728,23 +774,31 @@
             </ul>
           </div>
         </div>
+
+        <!-- Botón “&lt; Todos” -->
         <div
           class="col-md-2 d-flex flex-column justify-content-center align-items-center"
         >
           <button
-            class="btn btn-primary"
+            class="btn btn-primary mb-2"
             (click)="removeAllSelected()"
-            [disabled]="selectedServices.length === 0"
+            [disabled]="
+              getPassengerSelectedServices(selectedPassengerKey).length === 0
+            "
           >
             &lt; Todos
           </button>
         </div>
+
+        <!-- Servicios seleccionados -->
         <div class="col-md-5">
           <div class="card shadow-sm">
             <div class="card-header">Servicios Seleccionados</div>
             <ul class="list-group list-group-flush">
               <li
-                *ngFor="let s of selectedServices"
+                *ngFor="
+                  let s of getPassengerSelectedServices(selectedPassengerKey)
+                "
                 class="list-group-item d-flex justify-content-between align-items-center"
               >
                 <div>
@@ -764,7 +818,9 @@
                 </div>
               </li>
               <li
-                *ngIf="selectedServices.length === 0"
+                *ngIf="
+                  !getPassengerSelectedServices(selectedPassengerKey).length
+                "
                 class="list-group-item text-center text-muted"
               >
                 Ningún servicio seleccionado
@@ -774,6 +830,9 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="mt-3 text-end">
+    <h5>Precio total: ${{ totalAmount }}</h5>
   </div>
   <!-- Guardar Reserva -->
   <div class="mt-4 text-center">

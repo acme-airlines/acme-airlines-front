@@ -8,4 +8,5 @@ export interface Companion{
       email: string;
       relationShip: string;
       age: number;
+      rol:string
 }

@@ -11,7 +11,7 @@ module.exports = {
     }
   },
   "/document-type/**": {
-    "target": "http://localhost:8001/api/v1/document-type",
+    "target": "http://localhost:8001/passengers/api/v1/document-type",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -19,7 +19,7 @@ module.exports = {
     }
   },
   "/passenger/**": {
-    "target": "http://localhost:8001/api/v1/passenger",
+    "target": "http://localhost:8001/passengers/api/v1/passenger",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -43,7 +43,7 @@ module.exports = {
     }
   },
   "/fees/**": {
-    "target": "http://localhost:8003/fees-tarif/api/v1/fees",
+    "target": "http://localhost:8003/fees-tariff/api/v1/fees",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -51,7 +51,7 @@ module.exports = {
     }
   },
   "/service-fee/**": {
-    "target": "http://localhost:8003/fees-tarif/api/v1/service-fee",
+    "target": "http://localhost:8003/fees-tariff/api/v1/service-fee",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -59,7 +59,7 @@ module.exports = {
     }
   },
   "/user/**": {
-    "target": "http://localhost:8001/api/v1/user",
+    "target": "http://localhost:8001/passengers/api/v1/user",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
@@ -67,7 +67,7 @@ module.exports = {
     }
   },
   "/service-passenger/**": {
-    "target": "http://localhost:8003/fees-tarif/api/v1/service-passenger",
+    "target": "http://localhost:8003/fees-tariff/api/v1/service-passenger",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {

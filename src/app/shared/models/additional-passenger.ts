@@ -12,4 +12,5 @@ export interface AdditionalPassenger{
     age: number;
     specialCondition:boolean;
     emergencyContact?: EmergencyContact
+    rol: string
 }
