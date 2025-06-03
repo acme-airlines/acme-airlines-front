@@ -1,16 +1,16 @@
 module.exports = {
   "/auth": {
-    "target": "https://api-acmeairlines.duckdns.org/oauth/api/v1/public/auth",
+    "target": "https://api-acmeairlines.ddns.net/oauth/api/v1/public/auth",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
     "pathRewrite": { "^/auth": "" },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   },
   "/document-type/**": {
-    "target": "https://api-acmeairlines.duckdns.org/passengers/api/v1/document-type",
+    "target": "https://api-acmeairlines.ddns.net/passengers/api/v1/document-type",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -18,11 +18,11 @@ module.exports = {
       "^/document-type": ""
     },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   },
   "/passenger/**": {
-    "target": "https://api-acmeairlines.duckdns.org/passengers/api/v1/passenger",
+    "target": "https://api-acmeairlines.ddns.net/passengers/api/v1/passenger",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -30,11 +30,11 @@ module.exports = {
       "^/passenger": ""
     },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   },
   "/cities/**": {
-    "target": "https://api-acmeairlines.duckdns.org/flights/api/v1/cities",
+    "target": "https://api-acmeairlines.ddns.net/flights/api/v1/cities",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -42,11 +42,11 @@ module.exports = {
       "^/cities": ""
     },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   },
   "/flights/**": {
-    "target": "https://api-acmeairlines.duckdns.org/flights/api/v1/flights",
+    "target": "https://api-acmeairlines.ddns.net/flights/api/v1/flights",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -54,11 +54,11 @@ module.exports = {
       "^/flights": ""
     },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   },
   "/fees/**": {
-    "target": "https://api-acmeairlines.duckdns.org/fees-tariff/api/v1/fees",
+    "target": "https://api-acmeairlines.ddns.net/fees-tariff/api/v1/fees",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -66,11 +66,11 @@ module.exports = {
       "^/fees": ""
     },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   },
   "/service-fee/**": {
-    "target": "https://api-acmeairlines.duckdns.org/fees-tariff/api/v1/service-fee",
+    "target": "https://api-acmeairlines.ddns.net/fees-tariff/api/v1/service-fee",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -78,11 +78,11 @@ module.exports = {
       "^/service-fee": ""
     },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   },
   "/user/**": {
-    "target": "https://api-acmeairlines.duckdns.org/passengers/api/v1/user",
+    "target": "https://api-acmeairlines.ddns.net/passengers/api/v1/user",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -90,11 +90,11 @@ module.exports = {
       "^/user": ""
     },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   },
   "/service-passenger/**": {
-    "target": "https://api-acmeairlines.duckdns.org/fees-tariff/api/v1/service-passenger",
+    "target": "https://api-acmeairlines.ddns.net/fees-tariff/api/v1/service-passenger",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -102,7 +102,7 @@ module.exports = {
       "^/service-passenger": ""
     },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   }
 }
