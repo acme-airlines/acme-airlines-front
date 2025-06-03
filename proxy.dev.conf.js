@@ -1,13 +1,13 @@
 module.exports = {
-  
+
   "/auth": {
-    "target": "https://api-acmeairlines.duckdns.org/oauth/api/v1/public/auth",
+    "target": "https://api-acmeairlines.ddns.net/oauth/api/v1/public/auth",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
     "pathRewrite": { "^/auth": "" },
     "headers": {
-      "Origin": "https://api-acmeairlines.duckdns.org"
+      "Origin": "https://api-acmeairlines.ddns.net"
     }
   },
   "/document-type/**": {
