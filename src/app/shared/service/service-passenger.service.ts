@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 import { ServicePassengerRequest } from '@sharedModule/models/service-passenger-request';
+import { Response } from '@sharedModule/models/response';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ import { ServicePassengerRequest } from '@sharedModule/models/service-passenger-
 export class ServicePassengerService {
   constructor(private http: HttpClient) {}
 
-  createServicePassenger(request: ServicePassengerRequest): Observable<Boolean> {
-    return this.http.post<Boolean>(`${environment.api.postCreateServicePassenger}`, request);
+  createServicePassenger(request: ServicePassengerRequest): Observable<Response> {
+    return this.http.post<Response>(`${environment.api.postCreateServicePassenger}`, request);
   }
 }

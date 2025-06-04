@@ -8,5 +8,10 @@ export const api = {
     getAllCities: '/cities/all',
     getAvailableFlights: '/flights/filter',
     getFeeAvailbleByFlight: '/fees/available-by-flight',
-    getServiceFeeAll: '/service-fee/all'
+    getServiceFeeAll: '/service-fee/all',
+    postPayment: '/payments/charge',
+    getCreateQr: '/qr/create',
+    getSeatsByFlight: '/seat',
+    postReserveSeat: '/seat/assign',
+    bookSeats: '/seat/book'
 }

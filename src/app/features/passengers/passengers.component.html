@@ -1,5 +1,11 @@
 <!-- passengers.component.html -->
 <div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Registro de Pasajeros</h2>
+    <button class="btn btn-outline-secondary" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i> Volver
+    </button>
+  </div>
   <!-- pestañas como Pills centradas -->
   <ul class="nav nav-pills nav-justified mb-4" role="tablist">
     <li class="nav-item" role="presentation">
@@ -69,14 +75,11 @@
               <div class="col-md-4">
                 <label class="form-label">Documento</label>
                 <input formControlName="document" class="form-control" />
-                <div
-                  *ngIf="
-                    principalForm.get('document')!.touched &&
-                    principalForm.get('document')!.hasError('required')
-                  "
-                  class="text-danger small"
-                >
+                <div *ngIf="principalForm.get('document')?.touched && principalForm.get('document')?.hasError('required')" class="text-danger small">
                   Documento requerido.
+                </div>
+                <div *ngIf="principalForm.get('document')?.touched && principalForm.get('document')?.hasError('maxlength')" class="text-danger small">
+                  El número de documento no puede exceder 10 dígitos.
                 </div>
               </div>
               <!-- Género -->
@@ -105,6 +108,8 @@
                   type="date"
                   formControlName="birthDate"
                   class="form-control"
+                  [attr.min]="minBirthDate"
+                  [attr.max]="maxBirthDate"
                 />
                 <div
                   *ngIf="
@@ -115,7 +120,16 @@
                 >
                   Fecha de nacimiento requerida.
                 </div>
-                <!-- opcional: mostrar edad calculada -->
+                <div
+                  *ngIf="
+                    principalForm.get('birthDate')!.value &&
+                    (principalForm.get('birthDate')!.value < minBirthDate ||
+                     principalForm.get('birthDate')!.value > maxBirthDate)
+                  "
+                  class="text-danger small"
+                >
+                  La fecha debe estar entre 1900-01-01 y {{ maxBirthDate }}.
+                </div>
                 <div *ngIf="principalForm.get('birthDate')!.valid" class="mt-1">
                   <small>Edad: {{ age }} años</small>
                 </div>
@@ -215,14 +229,11 @@
                   <div class="col-md-4">
                     <label class="form-label">Documento</label>
                     <input formControlName="document" class="form-control" />
-                    <div
-                      *ngIf="
-                        companionForm.get('document')!.touched &&
-                        companionForm.get('document')!.hasError('required')
-                      "
-                      class="text-danger small"
-                    >
+                    <div *ngIf="companionForm.get('document')?.touched && companionForm.get('document')?.hasError('required')" class="text-danger small">
                       Documento requerido.
+                    </div>
+                    <div *ngIf="companionForm.get('document')?.touched && companionForm.get('document')?.hasError('maxlength')" class="text-danger small">
+                      El número de documento no puede exceder 10 dígitos.
                     </div>
                   </div>
                   <!-- Tipo Documento Acompañante -->
@@ -273,6 +284,8 @@
                       type="date"
                       formControlName="birthDate"
                       class="form-control"
+                      [attr.min]="minBirthDate"
+                      [attr.max]="maxBirthDate"
                     />
                     <div
                       *ngIf="
@@ -283,11 +296,17 @@
                     >
                       Fecha de nacimiento requerida.
                     </div>
-                    <!-- mostrar edad calculada -->
                     <div
-                      *ngIf="companionForm.get('birthDate')!.valid"
-                      class="mt-1"
+                      *ngIf="
+                        companionForm.get('birthDate')!.value &&
+                        (companionForm.get('birthDate')!.value < minBirthDate ||
+                         companionForm.get('birthDate')!.value > maxBirthDate)
+                      "
+                      class="text-danger small"
                     >
+                      La fecha debe estar entre 1900-01-01 y {{ maxBirthDate }}.
+                    </div>
+                    <div *ngIf="companionForm.get('birthDate')!.valid" class="mt-1">
                       <small>Edad: {{ companionAge }} años</small>
                     </div>
                     <!-- validación de mayor de edad -->
@@ -574,14 +593,11 @@
               <div class="col-md-4">
                 <label class="form-label">Documento</label>
                 <input formControlName="document" class="form-control" />
-                <div
-                  *ngIf="
-                    additionalForm.get('document')!.touched &&
-                    additionalForm.get('document')!.hasError('required')
-                  "
-                  class="text-danger small"
-                >
+                <div *ngIf="additionalForm.get('document')?.touched && additionalForm.get('document')?.hasError('required')" class="text-danger small">
                   Documento requerido.
+                </div>
+                <div *ngIf="additionalForm.get('document')?.touched && additionalForm.get('document')?.hasError('maxlength')" class="text-danger small">
+                  El número de documento no puede exceder 10 dígitos.
                 </div>
               </div>
               <div class="col-md-4">
@@ -838,11 +854,11 @@
   <div class="mt-4 text-center">
     <button
       class="btn btn-success"
-      (click)="saveAll()"
+      (click)="goToSeatSelection()"
       [disabled]="!mainPassenger && additionalPassengers.length === 0"
     >
       <i class="bi bi-save me-2"></i>
-      Guardar Reserva
+      Continuar Asientos
     </button>
   </div>
 </div>

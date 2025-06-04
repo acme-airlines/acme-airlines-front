@@ -42,6 +42,22 @@ module.exports = {
       "^/flights": ""
     }
   },
+  "/payments/**": {
+    "target": "http://localhost:8002/flights/api/v1/payments",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/payments": ""
+    }
+  },
+  "/seat/**": {
+    "target": "http://localhost:8002/flights/api/v1/seat",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/seat": ""
+    }
+  },
   "/fees/**": {
     "target": "http://localhost:8003/fees-tariff/api/v1/fees",
     "secure": false,
@@ -72,6 +88,14 @@ module.exports = {
     "logLevel": "debug",
     "pathRewrite": {
       "^/service-passenger": ""
+    }
+  },
+  "/qr/**": {
+    "target": "http://localhost:8001/passengers/api/v1/qr",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/qr": ""
     }
   }
 }

@@ -1,0 +1,76 @@
+<div class="seat-selection-container container mt-5">
+  <div class="mb-3 text-start">
+    <button class="btn btn-outline-secondary" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i> Volver
+    </button>
+  </div>
+  <div class="mb-4">
+    <label class="form-label fw-semibold">Asignar asiento a:</label>
+    <div class="d-flex flex-wrap gap-2 mt-2">
+      <button
+        *ngFor="let key of passengerKeys"
+        type="button"
+        class="btn passenger-btn"
+        [ngClass]="{
+          'active': activePassengerKey === key
+        }"
+        (click)="selectPassenger(key)"
+      >
+        {{ key }}
+      </button>
+    </div>
+  </div>
+
+  <!-- 2) Título vuelo y spinner/ error -->
+  <h3 class="text-center mb-4">Asientos vuelo <span class="text-primary">{{ flightCode }}</span></h3>
+  <div *ngIf="loading" class="d-flex justify-content-center my-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+  <div *ngIf="errorMsg && !loading" class="alert alert-danger text-center py-2">
+    {{ errorMsg }}
+  </div>
+
+  <!-- 3) Grilla de asientos -->
+  <div *ngIf="!loading && !errorMsg" class="seat-grid">
+    <ng-container *ngFor="let row of getRows()">
+      <div class="d-flex justify-content-center mb-2">
+        <ng-container *ngFor="let label of row">
+          <button
+            class="seat-btn d-flex flex-column align-items-center justify-content-center mb-2"
+            [ngClass]="{
+              'free': getAssignedPassengerLabel(findSeatByLabel(label)!.id) === null && findSeatByLabel(label)?.status === 'FREE',
+              'taken': findSeatByLabel(label)?.status === 'TAKEN',
+              'assigned': getAssignedPassengerLabel(findSeatByLabel(label)!.id) !== null,
+              'active-passenger': getAssignedPassengerLabel(findSeatByLabel(label)!.id) === activePassengerKey
+            }"
+            [disabled]="findSeatByLabel(label)?.status === 'TAKEN' || !activePassengerKey"
+            (click)="assignSeatToPassenger(findSeatByLabel(label)!)"
+          >
+            <span class="seat-label">{{ label }}</span>
+            <span
+              *ngIf="getAssignedPassengerLabel(findSeatByLabel(label)!.id) as assigned"
+              class="assigned-badge"
+              >{{ assigned }}</span
+            >
+          </button>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- 4) Botones de acción -->
+  <div class="text-center mt-4">
+    <button
+      class="btn btn-lg btn-primary me-3"
+      [disabled]="loading"
+      (click)="confirmSelection()"
+    >
+      <i class="bi bi-check2-circle me-2"></i>Continuar Pago
+    </button>
+    <button class="btn btn-outline-secondary btn-lg" [disabled]="loading" (click)="fetchSeats()">
+      <i class="bi bi-arrow-clockwise me-2"></i>Recargar asientos
+    </button>
+  </div>
+</div>

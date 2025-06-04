@@ -14,9 +14,7 @@ module.exports = {
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": {
-      "^/document-type": ""
-    },
+    "pathRewrite": { "^/document-type": "" },
     "headers": {
       "Origin": "https://api-acmeairlines.ddns.net"
     }
@@ -26,9 +24,7 @@ module.exports = {
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": {
-      "^/passenger": ""
-    },
+    "pathRewrite": { "^/passenger": "" },
     "headers": {
       "Origin": "https://api-acmeairlines.ddns.net"
     }
@@ -38,9 +34,7 @@ module.exports = {
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": {
-      "^/cities": ""
-    },
+    "pathRewrite": { "^/cities": "" },
     "headers": {
       "Origin": "https://api-acmeairlines.ddns.net"
     }
@@ -50,9 +44,27 @@ module.exports = {
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": {
-      "^/flights": ""
-    },
+    "pathRewrite": { "^/flights": "" },
+    "headers": {
+      "Origin": "https://api-acmeairlines.ddns.net"
+    }
+  },
+  "/payments/**": {
+    "target": "https://api-acmeairlines.ddns.net/flights/api/v1/payments",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": { "^/payments": "" },
+    "headers": {
+      "Origin": "https://api-acmeairlines.ddns.net"
+    }
+  },
+  "/seat/**": {
+    "target": "https://api-acmeairlines.ddns.net/flights/api/v1/seat",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": { "^/seat": "" },
     "headers": {
       "Origin": "https://api-acmeairlines.ddns.net"
     }
@@ -62,9 +74,7 @@ module.exports = {
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": {
-      "^/fees": ""
-    },
+    "pathRewrite": { "^/fees": "" },
     "headers": {
       "Origin": "https://api-acmeairlines.ddns.net"
     }
@@ -74,9 +84,7 @@ module.exports = {
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": {
-      "^/service-fee": ""
-    },
+    "pathRewrite": { "^/service-fee": "" },
     "headers": {
       "Origin": "https://api-acmeairlines.ddns.net"
     }
@@ -86,9 +94,7 @@ module.exports = {
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": {
-      "^/user": ""
-    },
+    "pathRewrite": { "^/user": "" },
     "headers": {
       "Origin": "https://api-acmeairlines.ddns.net"
     }
@@ -98,11 +104,19 @@ module.exports = {
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": {
-      "^/service-passenger": ""
-    },
+    "pathRewrite": { "^/service-passenger": "" },
+    "headers": {
+      "Origin": "https://api-acmeairlines.ddns.net"
+    }
+  },
+  "/qr/**": {
+    "target": "https://api-acmeairlines.ddns.net/passengers/api/v1/qr",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": { "^/qr": "" },
     "headers": {
       "Origin": "https://api-acmeairlines.ddns.net"
     }
   }
-}
+};
