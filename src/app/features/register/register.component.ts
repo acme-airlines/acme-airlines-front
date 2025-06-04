@@ -54,16 +54,16 @@ export class RegisterComponent implements OnInit {
       finalize(() => this.spinner.hide())
     ).subscribe();
   }
-  
+
   register(){
-    const { 
-      name, 
-      lastName, 
-      phone, 
-      typeDocument, 
-      numberDocument, 
-      email, 
-      dateOfBirth, 
+    const {
+      name,
+      lastName,
+      phone,
+      typeDocument,
+      numberDocument,
+      email,
+      dateOfBirth,
       genre,
       password
     } = this.registerForm.value;

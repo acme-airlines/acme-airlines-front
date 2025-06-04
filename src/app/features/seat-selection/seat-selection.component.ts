@@ -42,7 +42,8 @@ export class SeatSelectionComponent implements OnInit {
     private seatService: SeatService,
     private router: Router,
     private passengersRegister: PassengersRegisterService,
-    private location: Location
+    private location: Location,
+    private spinner: NgxSpinnerService
   ) {}
 
   goBack(): void {
@@ -75,6 +76,7 @@ export class SeatSelectionComponent implements OnInit {
 
   /** 1) Traer los asientos del vuelo desde el servicio */
   public fetchSeats(): void {
+    this.spinner.show();
     this.loading = true;
     this.seatService.getSeatsByFlight(this.flightCode).subscribe({
       next: (dtos) => {
@@ -91,10 +93,12 @@ export class SeatSelectionComponent implements OnInit {
           } as SeatView;
         });
         this.loading = false;
+        this.spinner.hide();
       },
       error: (_) => {
         this.errorMsg = 'Error al cargar los asientos del vuelo.';
         this.loading = false;
+        this.spinner.hide();
       }
     });
   }

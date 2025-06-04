@@ -11,6 +11,7 @@ import { of } from 'rxjs';
 import { FeesFlight } from '@sharedModule/models/feesFlight';
 import { AuthService } from '@sharedModule/service/auth.service';
 import { TokenResponse } from '@sharedModule/models/token-response';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'acme-airlines-flights',
@@ -79,7 +80,8 @@ flights = [
     private cityService: CityService,
     private flightsService: FlightsService,
     private feeService:FeeService,
-    private authService:AuthService
+    private authService:AuthService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -89,16 +91,18 @@ flights = [
   }
 
   private iniciarSesion(): void {
-    
+    this.spinner.show();
      // Consume el endpoint de client-oauth que se encarga de autenticar y generar el token
         this.authService.login({username:'1qwe.doe@example.com', password: '12345'}).subscribe({
           next: (response: TokenResponse) => {
             console.log('Autenticación exitosa', response);
             // Almacena el token (por ejemplo, en localStorage)
             localStorage.setItem('access_token', response.accessToken);
+            this.spinner.hide();
             this.loadCities();
           },
           error: (err) => {
+            this.spinner.hide();
             console.error('Error de autenticación', err);
           },
         });
@@ -135,10 +139,12 @@ flights = [
   }
 
   private loadCities(): void {
+    this.spinner.show()
     this.cityService.allCitys().subscribe((cities: City[]) => {
       this.cities = cities;
       this.filteredOriginCities = cities;
       this.filteredDestinationCities = cities;
+      this.spinner.hide();
     });
 
     this.flightSearchForm.get('origin')?.valueChanges.subscribe((value: string) => {
@@ -174,6 +180,7 @@ flights = [
 
   search(): void {
     if (this.flightSearchForm.valid) {
+      this.spinner.show();
       const formValue = this.flightSearchForm.value;
 
       const requestPayload: FlightFilterRequest = {
@@ -187,6 +194,7 @@ flights = [
         next: (flightsApi: FlightResponse[]) => {
           this.flightDetail = flightsApi;
           this.searchClicked = true;
+          this.spinner.hide();
         },
         complete: (() => {
           for(const flight of this.flightDetail){
@@ -196,7 +204,10 @@ flights = [
               }
             })
           }
-        })
+        }),
+        error: () => {    // ← en caso de error también detenemos spinner
+                  this.spinner.hide();
+        }
       })
     } else {
       this.flightSearchForm.markAllAsTouched();

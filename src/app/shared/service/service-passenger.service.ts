@@ -11,7 +11,7 @@ import { Response } from '@sharedModule/models/response';
 export class ServicePassengerService {
   constructor(private http: HttpClient) {}
 
-  createServicePassenger(request: ServicePassengerRequest): Observable<Response> {
-    return this.http.post<Response>(`${environment.api.postCreateServicePassenger}`, request);
+  createServicePassenger(request: ServicePassengerRequest): Observable<{ [key: string]: string }> {
+    return this.http.post<{ [key: string]: string }>(`${environment.api.postCreateServicePassenger}`, request);
   }
 }

@@ -20,6 +20,7 @@ import { QrService } from '@sharedModule/service/qr.service';
 import { Qr } from '@sharedModule/models/qr';
 import { Location } from '@angular/common';
 import { SeatBookingRequestDto, SeatService } from '@sharedModule/service/seat.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'acme-airlines-payment',
@@ -42,6 +43,8 @@ export class PaymentComponent implements OnInit {
     expiryYear: '',
     cvv: '',
     amount: 0, // se cargará desde la query param
+    codeFlight: '',
+    codePassenger: ''
   };
 
   response: PaymentResponse | null = null;
@@ -63,7 +66,8 @@ export class PaymentComponent implements OnInit {
     private seatService: SeatService,                // ← inyectamos SeatService
     private qrService: QrService,
     private sanitizer: DomSanitizer,
-    private location: Location
+    private location: Location,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -100,6 +104,7 @@ export class PaymentComponent implements OnInit {
       return;
     }
 
+    this.spinner.show();
     // ─── 1) Construir la lista de asientos a reservar ───────────────────────
     const assignedMap = this.passengersRegister.getAssignedSeats();
 
@@ -119,6 +124,7 @@ export class PaymentComponent implements OnInit {
       (this.companionData ? 1 : 0) +
       this.additionalPassengers.length;
     if (provisionalSeats.length !== numPassengers) {
+      this.spinner.hide();
       this.errorMsg = 'Debe asignar un asiento a cada pasajero antes de continuar.';
       return;
     }
@@ -199,7 +205,6 @@ export class PaymentComponent implements OnInit {
             });
           }
         });
-
         // ─── 2.3) Invocamos al endpoint /book de SeatService ─────────────────────────
         this.seatService.bookSeats(seatRequests).subscribe({
           next: () => {
@@ -221,21 +226,24 @@ export class PaymentComponent implements OnInit {
             };
 
             this.servicePassenger.createServicePassenger(request).subscribe({
-              next: () => {
+              next: (respMap) => {
                 // ─── 4) Finalmente cobramos la tarjeta ──────────────────────────────────
-                this.chargeCard();
+                this.chargeCard(data['principal']);
               },
               error: err => {
+                this.spinner.hide();
                 this.errorMsg = 'Error guardando servicios: ' + (err.error?.message || err.message);
               }
             });
           },
           error: err => {
+            this.spinner.hide();
             this.errorMsg = 'Error reservando asientos: ' + (err.error?.message || err.message);
           }
         });
       },
       error: err => {
+        this.spinner.hide();
         this.errorMsg = 'Error guardando reserva: ' + (err.error?.message || err.message);
       }
     });
@@ -243,11 +251,22 @@ export class PaymentComponent implements OnInit {
 
 
   /** 3.10) Cobrar la tarjeta */
-  private chargeCard(): void {
+  private chargeCard(resPassenger:string): void {
+      // === Asignar codeFlight / codePassenger en el objeto `payment` ===
+  if (!this.info || !this.mainPassenger) {
+    this.spinner.hide();
+    this.errorMsg = 'No hay datos de vuelo o pasajero para procesar pago.';
+    return;
+  }
+  // Suponemos que el identificador único del pasajero es su document
+  // (o el campo que el backend use como código de pasajero)
+  this.payment.codeFlight     = this.info.codigoVuelo!;
+  this.payment.codePassenger = resPassenger
+
     this.paymentService.chargeCard(this.payment).subscribe({
       next: (res) => {
         this.response = res;
-
+        this.spinner.hide();
         // ───────────── Si el pago fue aprobado, mostramos el resumen + QR ─────────────
         if (res.status === 'APPROVED') {
           this.showSummary = true;           // ocultar el formulario
@@ -256,6 +275,7 @@ export class PaymentComponent implements OnInit {
         // Si status === 'DECLINED', simplemente se mostrará el mensaje de error en template.
       },
       error: (err) => {
+        this.spinner.hide();
         if (err.error && err.error.message) {
           this.errorMsg = err.error.message;
           this.response = {

@@ -6,4 +6,6 @@ export interface PaymentRequest {
   expiryYear: string;
   cvv: string;
   amount: number;
+  codeFlight: string;
+  codePassenger: string;
 }
